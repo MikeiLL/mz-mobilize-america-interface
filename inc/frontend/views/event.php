@@ -1,4 +1,4 @@
-<div class="ngp_event row mb-2 p-1 border border-light">
+<div class="mobilize-america-event">
     <?php
     $info_container_class = '';
     if ( $data->thumbnail && !empty($data->featured_image_url) ):
@@ -15,6 +15,6 @@
         <h6><?php echo $data->location_address . ' ' . $data->locality . ' ' . $data->region . ' ' . $data->postal_code ?></h6>
         <span><?php echo $data->start_date ?> - <?php echo $data->end_time ?></span>
         <br/>
-        <a class="btn btn-primary mt-2 float-right" href="<?php echo $data->url; ?>">Sign Up</a>
+        <a class="btn-event float-right" href="<?php echo $data->url; ?>">Sign Up</a>
     </div>
 </div>

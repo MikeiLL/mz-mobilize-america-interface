@@ -23,7 +23,7 @@ class Template_Loader extends Gamajo_Template_Loader {
      *
      * @var string
      */
-    protected $theme_template_directory = 'mobilize_america';
+    protected $theme_template_directory = 'templates/mobilize_america';
 
     /**
      * Reference to the root directory path of this plugin.

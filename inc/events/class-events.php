@@ -21,7 +21,7 @@ class Events extends Libraries\ShortCode_Script_Loader {
 			'container_id' => 'MobilizeEvents',
 			'failure_to_retrieve' => "Unable to retrieve events at this time.",
 			'no_events_message' => "We don't have any upcoming events listed at this time. Click below to get involved or informed.",
-			'thumbnail' => false
+			'thumbnail' => 0
 				), $atts );
 
         // Add Style with script adder
@@ -163,7 +163,7 @@ class Events extends Libraries\ShortCode_Script_Loader {
         } // If !empty Response
 
             if (!empty($events_feed)):?>
-                <a class="btn btn-block btn-primary mt-2" href="<?php echo $events_feed ?>"><?php echo $full_listing_text ?></a>
+                <a class="btn-event btn-events-block" href="<?php echo $events_feed ?>"><?php echo $full_listing_text ?></a>
             <?php
             endif;
 
