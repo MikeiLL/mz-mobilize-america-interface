@@ -4,6 +4,7 @@ namespace Mobilize_America\Inc\Core;
 use Mobilize_America as NS;
 use Mobilize_America\Inc\Admin as Admin;
 use Mobilize_America\Inc\Frontend as Frontend;
+use Mobilize_America\Inc\Events as Events;
 
 /**
  * The core plugin class.
@@ -65,6 +66,7 @@ class Init {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->register_shortcodes();
 	}
 
 	/**
@@ -134,9 +136,12 @@ class Init {
 	private function define_public_hooks() {
 
 		$plugin_public = new Frontend\Frontend( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
+        $event_object = new Events\Events();
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_ajax_nopriv_mobilize_america_events', $event_object, 'retrieve_events' );
+		$this->loader->add_action( 'wp_ajax_mobilize_america_events', $event_object, 'retrieve_events' );
 
 	}
 
@@ -182,6 +187,18 @@ class Init {
 	 */
 	public function get_plugin_text_domain() {
 		return $this->plugin_text_domain;
+	}
+
+	/**
+	 * Registers all the plugins shortcodes.
+	 *
+	 * - Events - The Events Class which displays events and loads necessary assets.
+	 *
+	 * @access    private
+	 */
+	private function register_shortcodes() {
+        $events_object = new Events\Events();
+        $events_object->register('display_events');
 	}
 
 }

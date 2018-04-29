@@ -2,6 +2,8 @@
 
 namespace Mobilize_America\Inc\Frontend;
 
+use Mobilize_America\Inc\Libraries as Libraries;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -102,6 +104,16 @@ class Frontend {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/mobilize-america-frontend.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Register the JavaScript for the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function define_shortcodes () {
+        $events_object = new Libraries\Events();
+        $events_object->register('display_events');
 	}
 
 }

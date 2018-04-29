@@ -1,20 +1,14 @@
 <?php
 /**
- * The plugin bootstrap file
- *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
  *
  * @link              http://mzoo.org
  * @since             1.0.0
  * @package           Mobilize_America
  *
  * @wordpress-plugin
- * Plugin Name:       WordPress Plugin Boilerplate
+ * Plugin Name:       Mobilize America Interface
  * Plugin URI:        https://github.com/MikeiLL/mobilize-america/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Simple interface for Mobilize America API.
  * Version:           1.0.0
  * Author:            mZoo/Mike iLL
  * Author URI:        http://mzoo.org/
