@@ -16,6 +16,9 @@ class Events extends Libraries\ShortCode_Script_Loader {
 			'organization_id' => '205',
 			'events_feed' => '',
 			'event_count' => '5',
+			'container_class' => 'loader',
+			'loading_text' => 'Loading...',
+			'container_id' => 'MobilizeEvents',
 			'failure_to_retrieve' => "Unable to retrieve events at this time.",
 			'no_events_message' => "We don't have any upcoming events listed at this time. Click below to get involved or informed.",
 			'thumbnail' => false
@@ -25,7 +28,12 @@ class Events extends Libraries\ShortCode_Script_Loader {
         self::addScript();
         self::localizeScript($atts);
 
-        return '<div id="MobilizeEvents" class="loader">Loading...</div>';
+        ob_start();
+        $template_loader = new Libraries\Template_Loader();
+        $template_loader->set_template_data( $atts );
+        $template_loader->get_template_part( 'events' );
+
+        return ob_get_clean();
     }
 
     public function addScript() {
