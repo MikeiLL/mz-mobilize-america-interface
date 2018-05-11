@@ -13,7 +13,16 @@
         <h6><?php echo $data->venue ?></h6>
         <?php endif; ?>
         <h6><?php echo $data->location_address . ' ' . $data->locality . ' ' . $data->region . ' ' . $data->postal_code ?></h6>
-        <span><?php echo $data->start_date ?> - <?php echo $data->end_time ?></span>
+        <?php
+         foreach ($data->time_slots as $k => $time_slot):
+            // Don't display event if time is previous to now.
+            if ($time_slot->end_date <= current_time('timestamp')) continue;
+        ?>
+        <span><?php echo get_date_from_gmt(date('l, F j g:i a', $time_slot->start_date),'l, F j g:i a') ?> -
+        <?php echo get_date_from_gmt(date('g:i a', $time_slot->end_date), 'g:i a') ?>
+        </span><br/>
+
+        <? endforeach; ?>
         <br/>
         <a class="btn-event float-right" href="<?php echo $data->url; ?>">Sign Up</a>
     </div>

@@ -140,8 +140,8 @@ class Init {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'wp_ajax_nopriv_mobilize_america_events', $event_object, 'retrieve_events' );
-		$this->loader->add_action( 'wp_ajax_mobilize_america_events', $event_object, 'retrieve_events' );
+		$this->loader->add_action( 'wp_ajax_nopriv_mobilize_america_events', $event_object, 'return_events' );
+		$this->loader->add_action( 'wp_ajax_mobilize_america_events', $event_object, 'return_events' );
 
 	}
 
@@ -198,7 +198,7 @@ class Init {
 	 */
 	private function register_shortcodes() {
         $events_object = new Events\Events();
-        $events_object->register('display_events');
+        $events_object->register('mobilize_display_events');
 	}
 
 }

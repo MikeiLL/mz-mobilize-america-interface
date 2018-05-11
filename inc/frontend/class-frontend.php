@@ -106,14 +106,4 @@ class Frontend {
 
 	}
 
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function define_shortcodes () {
-        $events_object = new Libraries\Events();
-        $events_object->register('display_events');
-	}
-
 }

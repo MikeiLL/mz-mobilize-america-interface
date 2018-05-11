@@ -95,51 +95,48 @@ class Events extends Libraries\ShortCode_Script_Loader {
         return $result;
     }
 
-    public function retrieve_events() {
+    public function return_events() {
 
         check_ajax_referer( $_REQUEST['nonce'], "mobilize_america_events_nonce", false);
 
         $atts = $_REQUEST['atts'];
 
-		$full_listing_text = $atts['full_listing_text'];
+        $full_listing_text = $atts['full_listing_text'];
 		$sign_up_text = $atts['sign_up_text'];
-		$events_feed = $atts['events_feed'];
 		$thumbnail = $atts['thumbnail'];
-		$organization_id = $atts['organization_id'];
-		$event_count = $atts['event_count'];
-		$failure_to_retrieve = stripslashes($atts['failure_to_retrieve']);
 		$no_events_message = stripslashes($atts['no_events_message']);
-
-        $response = $this->CallAPI('GET', 'https://events.mobilizeamerica.io/api/v1/events?organization_id='.$organization_id.'&per_page=100');
+		$events_feed = $atts['events_feed'];
+		$failure_to_retrieve = stripslashes($atts['failure_to_retrieve']);
+		$event_count = $atts['event_count'];
 
  	    $result['type'] = "success";
 
+ 	    $events = $this->retrieve_events($atts);
         ob_start();
-        if (empty($response)) {
+
+        if ($events['API Error']) {
         ?>
             <span class="bg-warning text-white"><?php echo $failure_to_retrieve; ?></span>
         <?php
+        } else if ($events['zero'] == 1) {
+        ?>
+            <span class="bg-warning text-white"><?php echo $no_events_message; ?></span>
+        <?php
         } else {
-            $data = json_decode($response)->data;
 
-            usort($data, function( $a, $b ) {
-                return $a->timeslots[0]->start_date - $b->timeslots[0]->start_date;
-            });
+            $events = $this->sequence_events($events);
 
             $template_loader = new Libraries\Template_Loader();
 
             $count = 0;
-            foreach ($data as $date => $event):
-                // Skip if event end time is previous to current time
-                if ($event->timeslots[0]->end_date <= current_time( 'timestamp' )) continue;
+            foreach ($events as $key => $event):
 
                 $count++;
 
                 $event_address = $event->location->address_lines[0] . ' ' . $event->location->address_lines[1];
                 $data = array(
                         'title' => $event->title,
-                        'start_date' => date('l, F j g:i a', $event->timeslots[0]->start_date),
-                        'end_time' => date('g:i a', $event->timeslots[0]->end_date),
+                        'time_slots' => $event->timeslots,
                         'featured_image_url' => isset($event->featured_image_url) ? $event->featured_image_url : '',
                         'venue_name' => isset($event->location->venue) ? $event->location->venue : '',
                         'location_address' => $event_address,
@@ -155,11 +152,7 @@ class Events extends Libraries\ShortCode_Script_Loader {
                 // Limit the number of events
                 if ($count >= $event_count) break;
             endforeach;
-            //If there are no events
-            if ($count === 0):?>
-                <span class="bg-info text-white"><?php echo $no_events_message; ?></span>
-            <?php
-            endif;
+
         } // If !empty Response
 
             if (!empty($events_feed)):?>
@@ -179,6 +172,48 @@ class Events extends Libraries\ShortCode_Script_Loader {
 
         die();
 
+    }
+
+    /*
+     *
+     *
+     */
+    private function retrieve_events($atts) {
+
+		$organization_id = $atts['organization_id'];
+
+        // Allow twelve hour window to allow
+        // for in-progress events
+        $events_start_time_filter = current_time( "timestamp" )-43200;
+
+        $response =  $this->CallAPI('GET', 'https://events.mobilizeamerica.io/api/v1/events?organization_id='.$organization_id.'&timeslot_start=gte_' . $events_start_time_filter . '&per_page=10');
+
+        $result = json_decode($response);
+
+        if (!empty($result->error)) {
+            return array('API Error' => $result->error);
+              $to = get_option('admin_email');
+              $subject = __('Mobilize America API Error', 'mobilize-america');
+              $message = "There was an error returning events: \n" . print_r($result->error);
+              wp_mail( $to, $subject,  $message, '', $attachments );
+        } else if (!$result->count >= 1) {
+            return array('zero' => 1);
+        }
+
+        return json_decode($response)->data;
+    }
+
+    /*
+     *
+     *
+     */
+    private function sequence_events($event_data) {
+        // Break each event into multiple events if
+
+        usort($event_data, function( $a, $b ) {
+                return $a->timeslots[0]->start_date - $b->timeslots[0]->start_date;
+            });
+        return $event_data;
     }
 }
 
