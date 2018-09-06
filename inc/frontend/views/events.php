@@ -1,1 +1,3 @@
-<div id="<?php echo $data->container_id; ?>" class="<?php echo $data->container_class; ?>"><?php echo $data->loading_text; ?></div>
+<div id="<?php echo esc_attr( $data->container_id ); ?>" class="<?php echo esc_attr( $data->container_class ); ?>">
+    <?php echo esc_html( $data->loading_text ); ?>
+</div>
