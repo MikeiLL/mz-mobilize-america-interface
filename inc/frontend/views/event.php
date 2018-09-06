@@ -22,7 +22,7 @@
         <?php echo get_date_from_gmt(date('g:i a', $time_slot->end_date), 'g:i a') ?>
         </span><br/>
 
-        <? endforeach; ?>
+        <?php endforeach; ?>
         <br/>
         <a class="btn-event float-right" href="<?php echo $data->url; ?>">Sign Up</a>
     </div>
