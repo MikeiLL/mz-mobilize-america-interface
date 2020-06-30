@@ -98,16 +98,15 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
 
         $events_start_time_filter = $now->getTimestamp();
 
-
-        $url_string = 'https://api.mobilize.us/v1/organizations';
+        $url_string = 'https://sandbox-api.mobilize.us/v1/organizations';
             
         $mobilize_url = htmlentities($url_string);
 
-        $response =  $this->CallAPI('GET', $mobilize_url);
+        $response = $this->CallAPI('GET', $mobilize_url);
 
         $result = json_decode($response);
         
-        return $result;
+        return $response;
 
         if (!empty($result->error)) {
             return array('API Error' => $result->error);
