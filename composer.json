@@ -31,7 +31,7 @@
 		"psr-4": {
 			"MZ_Mobilize_America\\": "src"
 		},
-		"classmap": ["classes/dependencies/"]
+		"classmap": ["classes/dependencies/gamajo/template-loader"]
 	},
 	"extra": {
 		"mozart": {

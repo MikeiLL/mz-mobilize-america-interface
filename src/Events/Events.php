@@ -1,7 +1,7 @@
 <?php
 namespace MZ_Mobilize_America\Events;
 
-use MZ_Mobilize_America;
+use MZ_Mobilize_America as NS;
 use MZ_Mobilize_America\ShortCode as ShortCode;
 
 class Events extends ShortCode\ShortCode_Script_Loader {
@@ -30,7 +30,7 @@ class Events extends ShortCode\ShortCode_Script_Loader {
         self::localizeScript($atts);
 
         ob_start();
-        $template_loader = new Libraries\Template_Loader();
+        $template_loader = new \MZ_Mobilize_America_Gamajo_Template_Loader();
         $template_loader->set_template_data( $atts );
         $template_loader->get_template_part( 'events' );
 
@@ -40,9 +40,9 @@ class Events extends ShortCode\ShortCode_Script_Loader {
     public function addScript() {
         if (!self::$addedAlready) {
             self::$addedAlready = true;
-            wp_register_script('mobilize_events_script', MZ_Mobilize_America\PLUGIN_NAME_URL . 'inc/frontend/js/events.js', array('jquery'), 1.0, true );
+            wp_register_script('mobilize_events_script', NS\PLUGIN_NAME_URL . 'inc/frontend/js/events.js', array('jquery'), 1.0, true );
  	        wp_enqueue_script('mobilize_events_script');
-            wp_register_style( 'mobilize_events_style', MZ_Mobilize_America\PLUGIN_NAME_URL . 'inc/frontend/css/events.css');
+            wp_register_style( 'mobilize_events_style', NS\PLUGIN_NAME_URL . 'inc/frontend/css/events.css');
             wp_enqueue_style('mobilize_events_style');
         }
     }
