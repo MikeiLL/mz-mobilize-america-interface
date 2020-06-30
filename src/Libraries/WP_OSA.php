@@ -721,8 +721,8 @@ class WP_OSA {
 	public function admin_menu() {
 		// add_options_page( $page_title, $menu_title, $capability, $menu_slug, array( $this, $callable ) );
 		add_options_page(
-			'MZ Mindbody Settings',
-			'MZ Mindbody',
+			'Mobilize America Settings',
+			'Mobilize America',
 			'manage_options',
 			'mz_mindbody_settings',
 			array( $this, 'plugin_page' )
@@ -731,7 +731,7 @@ class WP_OSA {
 
 	public function plugin_page() {
 		echo '<div class="wrap">';
-		echo '<h1>MZ Mindbody Settings <span style="font-size:50%;">v' . NS\PLUGIN_VERSION . '</span></h1>';
+		echo '<h1>Mobilize America Settings <span style="font-size:50%;">v' . NS\PLUGIN_VERSION . '</span></h1>';
 		$this->show_navigation();
 		$this->show_forms();
 		echo '</div>';

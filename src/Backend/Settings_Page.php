@@ -1,6 +1,8 @@
 <?php
 namespace MZ_Mobilize_America\Backend;
 
+use MZ_Mobilize_America as NS;
+
 use MZ_Mobilize_America\Libraries as Libraries; 
 
 
@@ -37,7 +39,7 @@ class Settings_Page {
         self::$wposa_obj->add_section(
             array(
                 'id'    => 'mz_mobilize_america',
-                'title' => __( 'MZ Mobilize America Settings', 'mz-mindbody-api' ),
+                'title' => __( 'MZ Mobilize America Settings', NS\PLUGIN_TEXT_DOMAIN ),
             )
         );
                 
@@ -48,7 +50,7 @@ class Settings_Page {
             array(
                 'id'      => 'mz_mobilize_america_shortcodes',
                 'type'    => 'html',
-                'name'    => __( 'Shortcodes and Atts', 'mz-mindbody-api' ),
+                'name'    => __( 'Shortcodes and Atts', NS\PLUGIN_TEXT_DOMAIN ),
                 'desc'    => $this->access_codes()
             )
         );
