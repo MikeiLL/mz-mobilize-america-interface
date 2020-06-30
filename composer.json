@@ -1,0 +1,48 @@
+{
+  "name": "mikeill/mobilize-america",
+  "description": "Interface with Mobilize America API",
+  "keywords": [
+    "api",
+    "political",
+    "Mobilize",
+    "Mobilize America",
+    "events",
+    "wordpress",
+    "plugin"
+  ],
+	"homepage": "https://github.com/MikeiLL/mobilize-america",
+	"license"          : "GPL-2.0-or-later",
+	"minimum-stability": "dev",
+	"authors": [
+    {
+      "name": "Mike iLL Kilmer",
+      "email": "mike@mzoo.org",
+      "homepage": "http://mzoo.org",
+      "role": "Developer"
+    }
+   ],
+	"type": "wordpress-plugin",
+	"require": {
+		"php": ">=7.1",
+		"composer/installers": "~1.0",
+    	"gamajo/template-loader": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"MZ_Mobilize_America\\": "src"
+		},
+		"classmap": ["classes/dependencies/"]
+	},
+	"extra": {
+		"mozart": {
+			"dep_namespace": "MZ_Mobilize_America\\Dependencies\\",
+			"dep_directory": "/src/Dependencies/",
+			"classmap_directory": "/classes/dependencies/",
+			"classmap_prefix": "MZ_Mobilize_America_",
+			"delete_vendor_directories": true
+		}
+	},
+  "require-dev": {
+    "coenjacobs/mozart": "dev-master"
+  }
+}
