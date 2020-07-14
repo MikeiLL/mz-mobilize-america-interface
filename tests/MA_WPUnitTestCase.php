@@ -1,5 +1,6 @@
 <?php
-require_once('Test_Options.php');
+namespace MobilizeAmericaTests;
+require 'Test_Options.php';
 
 /**
  * Class MA_WPUnitTestCase

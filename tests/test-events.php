@@ -1,4 +1,5 @@
 <?php
+namespace MobilizeAmericaTests;
 require_once('MA_WPUnitTestCase.php');
 require_once('Test_Options.php');
 
@@ -12,7 +13,7 @@ class Tests_Events extends MA_WPUnitTestCase {
 
         parent::setUp();
                         
-        $this->assertTrue(1 === 1);
+        $this->assertTrue(class_exists('\MZ_Mobilize_America\Core\Plugin_Core'));
         
 	}
 
