@@ -8,9 +8,11 @@ class API {
      */
     private function callApi($method, $endpoint, $data = false) {
 
+        $ma_options = get_option('mz_mobilize_america_settings');
+        
         $curl = curl_init();
         
-        $subdomain = 'staging-api';
+        $subdomain = $ma_options['use_staging'] == 'on' ? 'staging-api' : 'api';
         
         $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
         

@@ -19,7 +19,7 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
         //self::addScript();
         //self::localizeScript($atts);        
 
-        return "<pre>" . print_r($this->retrieve_organizations($atts), true) . "</pre>";
+        return $this->retrieve_organizations($atts);
     }
 
     public function addScript() {
@@ -49,8 +49,6 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
      *
      */
     private function retrieve_organizations($atts) {
-
-		$organization_id = $atts['organization_id'];
 
         $endpoint = 'organizations';
         

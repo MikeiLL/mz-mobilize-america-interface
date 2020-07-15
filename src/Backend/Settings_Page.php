@@ -61,6 +61,17 @@ class Settings_Page {
                 'desc'    => __( 'Default organization ID with which to interface', NS\PLUGIN_TEXT_DOMAIN )
             )
         );
+       
+        // Field: Regenerate Class Owners
+        self::$wposa_obj->add_field(
+            'mz_mobilize_america_settings',
+            array(
+                'id'      => 'use_staging',
+                'type'    => 'checkbox',
+                'name'    => __( 'Use the Mobilize America Staging API', NS\PLUGIN_TEXT_DOMAIN ),
+                'desc'    => __( 'Yes. Just testing for now.', NS\PLUGIN_TEXT_DOMAIN )
+            )
+        );
 		
        
         // Field: Regenerate Class Owners
