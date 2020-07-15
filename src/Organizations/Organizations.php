@@ -53,8 +53,22 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
 		$organization_id = $atts['organization_id'];
 
         $endpoint = 'organizations';
+        
+        $result = Common\API::make_request('GET', $endpoint);
+        
+        $listing_table = '<table>';
+        
+        echo count($result) . " Results.";
+        
+        foreach($result as $k => $org){
+            
+            $listing_table .= '<tr><td>' . $org->id . '</td><td>' . $org->name . '</td></tr>';
+            
+        }
+        
+        $listing_table .= '</table>';
 
-        return Common\API::make_request('GET', $endpoint);
+        return $listing_table;
 
     }
 
