@@ -724,7 +724,7 @@ class WP_OSA {
 			'Mobilize America Settings',
 			'Mobilize America',
 			'manage_options',
-			'mz_mindbody_settings',
+			'mobilize_america_settings',
 			array( $this, 'plugin_page' )
 		);
 	}
