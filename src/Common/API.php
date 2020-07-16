@@ -1,14 +1,38 @@
 <?php
 namespace MZ_Mobilize_America\Common;
 
+/* 
+ * API Error Object
+ * @since 1.0.0
+ *
+ * Hold and display information about errors calling the api
+ */
+class ApiError {
+    public $message = "";
+    
+    public function __construct($message){
+        $this->message = $message;
+    }
+}
+
 class API {
 
     /*
      * Basic Restful Request
+     * @since 1.0.0
+     * 
+     * Make the API call using wordpress wp_remote_post.
+     *
+     * @param $method string GET, POST, DELETE
+     * @param $endpoint string 
+     * @param $data string 
+     * @param $query_string string 
      */
-    private function callApi($method, $endpoint, $data = false) {
+    private function callApi($method, $endpoint, $data = false, $query_string = "") {
 
         $ma_options = get_option('mz_mobilize_america_settings');
+        
+		$organization_id = $ma_options['organization_id'];
         
         $curl = curl_init();
         
@@ -16,64 +40,86 @@ class API {
         
         $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
         
+        switch($endpoint):
+            case "events":
+                $query_string .= 'organization_id=' . $organization_id;
+                
+
+                $now = new \DateTime(null, new \DateTimeZone('America/New_York'));
+                // Allow One Day window to allow
+                // for in-progress events
+                $di = new \DateInterval('PT12H');
+                $di->invert = 1;
+                $now->add($di);
+                $events_start_time_filter = $now->getTimestamp();
+                $query_string .= 'timeslot_start=gte_' . $events_start_time_filter;
+                $query_string .= '&per_page=10';
+
+                break;
+        endswitch;
+        
+        $url = (!empty($query_string)) ? $url . '?' . $query_string : $url;
+        
         $url = htmlentities($url);
+		
+		$response = wp_remote_post( $url, 
+			array(
+				'method' => $method,
+				'timeout' => 45,
+				'httpversion' => '1.0',
+				'blocking' => true,
+				'headers' => '',
+				'body' => $data,
+				'data_format' => 'body',
+				'cookies' => array()
+			) );
+	    
+	    if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			self::alert_admin($error_message);
+			return "Error: " . $error_message;
+		} else {
+		    return json_decode($response['body']);
+		}	
+    }
+    
+    /*
+     * Alert Admin
+     *
+     */
+    private function alert_admin($message) {
+        
+        $to = get_option('admin_email');
+        $subject = __('Mobilize America API Error', 'mobilize-america');
+        
+        wp_mail( $to, $subject, $message, '');
 
-        switch ($method)
-        {
-            case "POST":
-                curl_setopt($curl, CURLOPT_POST, 1);
-
-                if ($data)
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                break;
-            case "PUT":
-                curl_setopt($curl, CURLOPT_PUT, 1);
-                break;
-            default:
-                if ($data)
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-        }
-
-        // Optional Authentication:
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        // curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $result;
     }
     
     /*
      * Make Request
      *
      * @since 1.0.0
+     * 
      * This is the static function through which this class is interfaced.
-     * @param $method string GET, POST
+     * @param $method string GET, POST, DELETE
      * @param $endpoint string 
-     * @param $method string 
+     * @param $data string 
+     * @param $query_string string 
      */
-    public static function make_request($method, $endpoint, $data = false) {
+    public static function make_request($method, $endpoint, $data = false, $query_string = false) {
     
-        $response = self::callApi($method, $endpoint, $data);
-        
-        $result = json_decode($response);
-        
-        if (!empty($result->error)) {
-            return array('API Error' => $result->error);
-              $to = get_option('admin_email');
-              $subject = __('Mobilize America API Error', 'mobilize-america');
-              $message = __("There was an error returning events:", 'mobilize-america') . "\n" . print_r($result->error);
-              wp_mail( $to, $subject,  $message, '', $attachments );
-        } else if (!$result->count >= 1) {
-            return array('zero' => 1);
+        $response = self::callApi($method, $endpoint, $data, $query_string);
+
+        if (!empty($response->error)) {
+            return new ApiError($response->error);
+            self::alert_admin(print_r($response->error, True));
+        } else if (!$response->count >= 1) {
+            return new ApiError("Zero Count");
         }
 
-        return json_decode($response)->data;
+        return $response;
+        
     }
 }
 
