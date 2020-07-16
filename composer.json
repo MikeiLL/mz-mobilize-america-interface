@@ -31,7 +31,7 @@
 		"psr-4": {
 			"MZ_Mobilize_America\\": "src"
 		},
-		"classmap": ["classes/dependencies/gamajo/template-loader"]
+		"files": ["vendor/gamajo/template-loader/class-gamajo-template-loader.php"]
 	},
 	"extra": {
 		"mozart": {
@@ -39,7 +39,10 @@
 			"dep_directory": "/src/Dependencies/",
 			"classmap_directory": "/classes/dependencies/",
 			"classmap_prefix": "MZ_Mobilize_America_",
-			"delete_vendor_directories": true
+			"delete_vendor_directories": true,
+			"packages": [
+			    "gamajo/template-loader"
+			]
 		}
 	},
   "require-dev": {
