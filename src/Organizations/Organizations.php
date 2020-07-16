@@ -8,11 +8,19 @@ use MZ_Mobilize_America\Common as Common;
 class Organizations extends ShortCode\ShortCode_Script_Loader {
 
     static $addedAlready = false;
+    
+    /*
+     * @since 1.0.0
+     * visibility private
+     * Shortcode attributes
+     */
+    private $atts;
 
     public function handleShortcode($atts, $content = null) {
 
-        $atts = shortcode_atts( array(
-			'organization_id' => 1
+        $this->atts = shortcode_atts( array(
+			'organization_id' => 1,
+			'query_string' => ''
 				), $atts );
 
         // Add Style with script adder
@@ -32,7 +40,7 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
         }
     }
 
-    public static function localizeScript($atts = []) {
+    public static function localizeScript() {
 
         $protocol = isset( $_SERVER["HTTPS"]) ? 'https://' : 'http://';
         $nonce = wp_create_nonce( 'mobilize_america_events_nonce');
@@ -48,17 +56,17 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
      *
      *
      */
-    private function retrieve_organizations($atts) {
+    private function retrieve_organizations() {
 
         $endpoint = 'organizations';
-        
-        $result = Common\API::make_request('GET', $endpoint);
+                
+        $result = Common\API::make_request('GET', $endpoint, false, $this->atts['query_string']);
         
         $listing_table = '<table>';
         
-        echo count($result) . " Results.";
+        echo "Displaying " . count($result->data) . " of " . $result->count . " results.";
         
-        foreach($result as $k => $org){
+        foreach($result->data as $k => $org){
             
             $listing_table .= '<tr><td>' . $org->id . '</td><td>' . $org->name . '</td></tr>';
             

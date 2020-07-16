@@ -3,19 +3,30 @@ namespace MZ_Mobilize_America\Events;
 
 use MZ_Mobilize_America as NS;
 use MZ_Mobilize_America\ShortCode as ShortCode;
+use MZ_Mobilize_America\Common as Common;
+use MZ_Mobilize_America\Libraries as Libraries;
 
 class Events extends ShortCode\ShortCode_Script_Loader {
 
     static $addedAlready = false;
+    
+    /*
+     * @since 1.0.0
+     * 
+     * visibility private
+     * Shortcode attributes
+     */
+    private $atts;
 
     public function handleShortcode($atts, $content = null) {
 
-        $atts = shortcode_atts( array(
+        $this->atts = shortcode_atts( array(
 			'full_listing_text' => __('Click Here for Full Listings &amp; Submission', 'mobilize-america'),
 			'sign_up_text' => __('Sign Up', 'mobilize-america'),
-			'organization_id' => '1',
+			'organization_id' => 0,
 			'events_feed' => '',
 			'event_count' => '5',
+			'query_string' => 0,
 			'container_class' => 'loader',
 			'loading_text' => -__('Loading...', 'mobilize-america'),
 			'container_id' => 'MobilizeEvents',
@@ -27,14 +38,16 @@ class Events extends ShortCode\ShortCode_Script_Loader {
 
         // Add Style with script adder
         self::addScript();
-        self::localizeScript($atts);
-
+        self::localizeScript($this->atts);
+        
+        $api_result = $this->retrieve_events();
         ob_start();
-        $template_loader = new \MZ_Mobilize_America_Gamajo_Template_Loader();
-        $template_loader->set_template_data( $atts );
+        $template_loader = new Libraries\Template_Loader();
+        $template_loader->set_template_data( ['atts' => $this->atts, 'api_result' => $api_result] );
         $template_loader->get_template_part( 'events' );
-
+        
         return ob_get_clean();
+        
     }
 
     public function addScript() {
@@ -57,43 +70,6 @@ class Events extends ShortCode\ShortCode_Script_Loader {
             'atts' => $atts
             );
         wp_localize_script( 'mobilize_events_script', 'mobilize_america_events', $params);
-    }
-
-    /*
-     * Basic Restful Request
-     */
-    private function CallAPI($method, $url, $data = false) {
-
-        $curl = curl_init();
-
-        switch ($method)
-        {
-            case "POST":
-                curl_setopt($curl, CURLOPT_POST, 1);
-
-                if ($data)
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                break;
-            case "PUT":
-                curl_setopt($curl, CURLOPT_PUT, 1);
-                break;
-            default:
-                if ($data)
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-        }
-
-        // Optional Authentication:
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        // curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $result;
     }
 
     public function return_events() {
@@ -202,48 +178,13 @@ class Events extends ShortCode\ShortCode_Script_Loader {
      *
      *
      */
-    private function retrieve_events($atts) {
-
-		$organization_id = $atts['organization_id'];
-        $now = new \DateTime(null, new \DateTimeZone('America/New_York'));
-
-
-        // Allow One Day window to allow
-        // for in-progress events
-        $di = new \DateInterval('PT12H');
-        $di->invert = 1;
-        $now->add($di);
-
-        $events_start_time_filter = $now->getTimestamp();
-
-
-        if (empty($atts['other_orgs'])):
-            $url_string = 'https://api.mobilize.us/v1/events?';
-            $url_string .= 'organization_id=' . $organization_id . '&';
-        else:
-            $url_string = 'https://staging.mobilize.us/v1/organizations' . $organization_id . '/events?';
-        endif;
+    private function retrieve_events() {
         
-        $url_string .= 'timeslot_start=gte_' . $events_start_time_filter;
-        $url_string .= '&per_page=10';
-
-        $mobilize_url = htmlentities($url_string);
-
-        $response =  $this->CallAPI('GET', $mobilize_url);
-
-        $result = json_decode($response);
-
-        if (!empty($result->error)) {
-            return array('API Error' => $result->error);
-              $to = get_option('admin_email');
-              $subject = __('Mobilize America API Error', 'mobilize-america');
-              $message = __("There was an error returning events:", 'mobilize-america') . "\n" . print_r($result->error);
-              wp_mail( $to, $subject,  $message, '', $attachments );
-        } else if (!$result->count >= 1) {
-            return array('zero' => 1);
-        }
-
-        return json_decode($response)->data;
+        $endpoint = 'events';
+                
+        $result = Common\API::make_request('GET', $endpoint, false, $this->atts['query_string']);
+        
+        return $result;
     }
 
     /*
