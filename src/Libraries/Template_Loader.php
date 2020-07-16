@@ -1,9 +1,9 @@
 <?php
 namespace MZ_Mobilize_America\Libraries;
 
-use MZ_Mobilize_America;
+use MZ_Mobilize_America as NS;
 
-class Template_Loader extends MZ_Mobilize_America_Gamajo_Template_Loader {
+class Template_Loader extends \Gamajo_Template_Loader {
 
     /**
      * Prefix for filter names.
@@ -33,7 +33,7 @@ class Template_Loader extends MZ_Mobilize_America_Gamajo_Template_Loader {
      *
      * @var string
      */
-    protected $plugin_directory = Mobilize_America\PLUGIN_NAME_DIR;
+    protected $plugin_directory = NS\PLUGIN_NAME_DIR;
 
     /**
      * Directory name where templates are found in this plugin.
@@ -46,7 +46,7 @@ class Template_Loader extends MZ_Mobilize_America_Gamajo_Template_Loader {
      *
      * @var string
      */
-    protected $plugin_template_directory = 'inc/frontend/views';
+    protected $plugin_template_directory = 'src/Frontend/views';
 
 }
 
