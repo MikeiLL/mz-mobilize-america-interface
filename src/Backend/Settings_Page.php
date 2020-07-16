@@ -90,11 +90,14 @@ class Settings_Page {
     
     private function access_codes(){
         $return = '';
-        $return .= '<p>'.sprintf('[%1$s] %2$s', 'mobilize_display_events', __("List events for specific organization.", NS\PLUGIN_TEXT_DOMAIN)).'</p>';
+        $return .= '<p>'.sprintf('[%1$s]', 'mobilize_display_events', __("List events for specific organization.", NS\PLUGIN_TEXT_DOMAIN)).'</p>';
         $return .= '<p>'.sprintf('[%1$s] %2$s', 'mobilize_display_organizations', __("List organizations", NS\PLUGIN_TEXT_DOMAIN)).'</p>';
-        // $return .= "<ul>";
-        // $return .= "<li><strong>level_1_redirect</strong>: " . __("(url string) URL to redirect users with level one access.", 'mz-mindbody-api')."</li>";
-        // $return .= "</ul>";
+        $return .= '<H3>' . __("Shortcode Atts: ", NS\PLUGIN_TEXT_DOMAIN) . "</h3>";
+        $return .= "<ul>";
+        $return .= "<li><strong>query_string</strong>: " . __("(query string) to append to end of API call", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "</ul>";
+        $return .= '<p>'.sprintf('Example: [%1$s  %2$s]', 'mobilize_display_events', htmlentities('query_string="timeslot_start=gte_1514764800&timeslot_start=lt_1515110400"')).'</p>';
+
         return $return;
     }
     
