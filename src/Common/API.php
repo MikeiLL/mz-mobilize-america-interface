@@ -33,8 +33,8 @@ class API {
      * 
      *  
      */
-    public function __construct__($atts = []){
-        $this->shortcode_atts = $atts;
+    public function __construct($shortcode_atts = []){
+        $this->shortcode_atts = $shortcode_atts;
     }
     
     
@@ -50,23 +50,29 @@ class API {
      * @param $data string 
      * @param $query_string string 
      */
-    private function callApi($method, $endpoint, $data = false) {
+    private function callApi($data = false) {
 
         $ma_options = get_option('mz_mobilize_america_settings');
         
-		$organization_id = $ma_options['organization_id'];
+		$organization_id = (!empty($this->shortcode_atts['organization_id'])) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
 		
-		$query_string = $this->shortcode_atts;
+		$query_string = (!empty($this->shortcode_atts['query_string'])) ? $this->shortcode_atts['query_string'] : "";
                 
         $subdomain = $ma_options['use_staging'] == 'on' ? 'staging-api' : 'api';
         
+        $endpoint = $this->shortcode_atts['endpoint'];
+        print_r($this->shortcode_atts . PHP_EOL);
+        
         $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
         
+        print_r($endpoint . PHP_EOL);
         switch($endpoint):
+            case "ogranizations":
+                $method = 'GET';
+                break;
             case "events":
                 $query_string .= 'organization_id=' . $organization_id;
-                
-
+                $method = 'GET';
                 $now = new \DateTime(null, new \DateTimeZone('America/New_York'));
                 // Allow One Day window to allow
                 // for in-progress events
@@ -83,6 +89,8 @@ class API {
         $url = (!empty($query_string)) ? $url . '?' . $query_string : $url;
         
         $url = htmlentities($url);
+        
+        print_r($url . PHP_EOL);
 		
 		$response = wp_remote_post( $url, 
 			array(
@@ -129,9 +137,13 @@ class API {
      * @param $data string 
      * @param $query_string string 
      */
-    public function make_request($method, $endpoint, $data = false) {
+    public function make_request($data = false) {
+        
+        print_r("In make_request" . PHP_EOL);
+        
+        print_r($this->shortcode_atts['endpoint'] . PHP_EOL);
     
-        $response = self::callApi($method, $endpoint, $data);
+        $response = self::callApi($data);
 
         if (!empty($response->error)) {
             return new ApiError($response->error);

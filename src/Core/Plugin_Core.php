@@ -4,9 +4,8 @@ namespace MZ_Mobilize_America\Core;
 use MZ_Mobilize_America as NS;
 use MZ_Mobilize_America\Admin as Admin;
 use MZ_Mobilize_America\Backend as Backend;
+use MZ_Mobilize_America\Display as Display;
 use MZ_Mobilize_America\Frontend as Frontend;
-use MZ_Mobilize_America\Events as Events;
-use MZ_Mobilize_America\Organizations as Organizations;
 
 /**
  * The core plugin class.
@@ -139,7 +138,7 @@ class Plugin_Core {
 	private function define_public_hooks() {
 
 		$plugin_public = new Frontend\Frontend( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
-        $event_object = new Events\Events();
+        $display_object = new Display\Display();
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -200,10 +199,8 @@ class Plugin_Core {
 	 * @access    private
 	 */
 	private function register_shortcodes() {
-        $events_object = new Events\Events();
-        $events_object->register('mobilize_display_events');
-        $organizations_object = new Organizations\Organizations();
-        $organizations_object->register('mobilize_display_organizations');
+        $display_object = new Display\Display();
+        $display_object->register('mobilize_america');
 	}
 
     /**
