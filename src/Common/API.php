@@ -16,7 +16,29 @@ class ApiError {
 }
 
 class API {
-
+     
+    
+    /*
+     * Shortcode Attributes
+     * @since 1.0.0
+     * 
+     * @visibility private
+     */
+    private $shortcode_atts;
+    
+    
+    /*
+     * Basic Restful Request
+     * @since 1.0.0
+     * 
+     *  
+     */
+    public function __construct__($atts = []){
+        $this->shortcode_atts = $atts;
+    }
+    
+    
+    
     /*
      * Basic Restful Request
      * @since 1.0.0
@@ -28,14 +50,14 @@ class API {
      * @param $data string 
      * @param $query_string string 
      */
-    private function callApi($method, $endpoint, $data = false, $query_string = "") {
+    private function callApi($method, $endpoint, $data = false) {
 
         $ma_options = get_option('mz_mobilize_america_settings');
         
 		$organization_id = $ma_options['organization_id'];
-        
-        $curl = curl_init();
-        
+		
+		$query_string = $this->shortcode_atts;
+                
         $subdomain = $ma_options['use_staging'] == 'on' ? 'staging-api' : 'api';
         
         $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
@@ -107,9 +129,9 @@ class API {
      * @param $data string 
      * @param $query_string string 
      */
-    public static function make_request($method, $endpoint, $data = false, $query_string = false) {
+    public function make_request($method, $endpoint, $data = false) {
     
-        $response = self::callApi($method, $endpoint, $data, $query_string);
+        $response = self::callApi($method, $endpoint, $data);
 
         if (!empty($response->error)) {
             return new ApiError($response->error);

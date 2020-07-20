@@ -181,8 +181,10 @@ class Events extends ShortCode\ShortCode_Script_Loader {
     private function retrieve_events() {
         
         $endpoint = 'events';
+        
+        $api = new Common\API($this->atts);
                 
-        $result = Common\API::make_request('GET', $endpoint, false, $this->atts['query_string']);
+        $result = $api->make_request('GET', $endpoint, false);
         
         return $result;
     }

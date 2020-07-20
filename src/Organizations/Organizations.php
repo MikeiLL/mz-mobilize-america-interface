@@ -59,8 +59,10 @@ class Organizations extends ShortCode\ShortCode_Script_Loader {
     private function retrieve_organizations() {
 
         $endpoint = 'organizations';
-                
-        $result = Common\API::make_request('GET', $endpoint, false, $this->atts['query_string']);
+        
+        $api = new Common\API($this->atts);
+        
+        $result = $api->make_request('GET', $endpoint, false);
         
         $listing_table = '<table>';
         
