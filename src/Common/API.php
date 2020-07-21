@@ -53,25 +53,20 @@ class API {
     private function callApi($data = false) {
 
         $ma_options = get_option('mz_mobilize_america_settings');
-        
-		$organization_id = (!empty($this->shortcode_atts['organization_id'])) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
-		
-		$query_string = (!empty($this->shortcode_atts['query_string'])) ? $this->shortcode_atts['query_string'] : "";
-                
+        		                
         $subdomain = $ma_options['use_staging'] == 'on' ? 'staging-api' : 'api';
         
         $endpoint = $this->shortcode_atts['endpoint'];
-        print_r($this->shortcode_atts . PHP_EOL);
-        
+
         $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
         
-        print_r($endpoint . PHP_EOL);
+        $query_array = $this->parse_query_string();
+
         switch($endpoint):
             case "ogranizations":
                 $method = 'GET';
                 break;
             case "events":
-                $query_string .= 'organization_id=' . $organization_id;
                 $method = 'GET';
                 $now = new \DateTime(null, new \DateTimeZone('America/New_York'));
                 // Allow One Day window to allow
@@ -80,18 +75,15 @@ class API {
                 $di->invert = 1;
                 $now->add($di);
                 $events_start_time_filter = $now->getTimestamp();
-                $query_string .= 'timeslot_start=gte_' . $events_start_time_filter;
-                $query_string .= '&per_page=10';
+                $query_array['timeslot_start'] = 'gte_' . $events_start_time_filter;
 
                 break;
         endswitch;
         
-        $url = (!empty($query_string)) ? $url . '?' . $query_string : $url;
+        $url = (!empty($query_array)) ? $url . '?' . http_build_query($query_array) : $url;
         
         $url = htmlentities($url);
-        
-        print_r($url . PHP_EOL);
-		
+        		
 		$response = wp_remote_post( $url, 
 			array(
 				'method' => $method,
@@ -112,6 +104,42 @@ class API {
 		    return json_decode($response['body']);
 		}	
     }
+    
+    /*
+     * Parse Query String 
+     * @since 1.0.0
+     *
+     * If query_string present, parse into a usable array, merge with other shortcodes, build query;
+     * @return query string
+     */
+     private function parse_query_string(){
+        $query_string = $this->shortcode_atts['query_string'];
+                
+        //remove question mark if present
+        if (substr($query_string, 0, 1) == '?') {
+            $query_string = substr($query_string, 1);
+        } 
+        
+        $ma_options = get_option('mz_mobilize_america_settings');
+        
+        $defaults = [
+            'organization_id' => !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'],
+            'per_page' => !empty($this->shortcode_atts['per_page']) ? $this->shortcode_atts['per_page'] : $ma_options['per_page']
+        ];
+        
+        // Unset empty default values
+        foreach($defaults as $k => $v) {
+            if (empty($v)) unset($defaults[$k]);
+        }
+        
+        if (!empty($query_string)){
+            $query_array = wp_parse_args($query_string, $defaults);
+        } else {
+            $query_array = $defaults;
+        }
+        
+        return $query_array;
+     }
     
     /*
      * Alert Admin
@@ -138,10 +166,6 @@ class API {
      * @param $query_string string 
      */
     public function make_request($data = false) {
-        
-        print_r("In make_request" . PHP_EOL);
-        
-        print_r($this->shortcode_atts['endpoint'] . PHP_EOL);
     
         $response = self::callApi($data);
 
