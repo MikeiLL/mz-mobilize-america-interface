@@ -56,9 +56,20 @@ class Settings_Page {
             'mz_mobilize_america_settings',
             array(
                 'id'      => 'organization_id',
-                'type'    => 'text',
+                'type'    => 'number',
                 'name'    => __( 'Main Organization ID', NS\PLUGIN_TEXT_DOMAIN ),
                 'desc'    => __( 'Default organization ID with which to interface', NS\PLUGIN_TEXT_DOMAIN )
+            )
+        );
+       
+        // Field: Regenerate Class Owners
+        self::$wposa_obj->add_field(
+            'mz_mobilize_america_settings',
+            array(
+                'id'      => 'per_page',
+                'type'    => 'number',
+                'name'    => __( 'Default number of listings to request', NS\PLUGIN_TEXT_DOMAIN ),
+                'desc'    => __( 'Default per_page request setting', NS\PLUGIN_TEXT_DOMAIN )
             )
         );
        
@@ -80,23 +91,44 @@ class Settings_Page {
             array(
                 'id'      => 'shortcode_listing',
                 'type'    => 'html',
-                'name'    => __( 'Shortcodes and Atts', NS\PLUGIN_TEXT_DOMAIN ),
-                'desc'    => $this->access_codes()
+                'name'    => __( 'Shortcode', NS\PLUGIN_TEXT_DOMAIN ),
+                'desc'    => '<p>' . sprintf('[%1$s %2$s]', 'mobilize_america', 'endpoint="events"') . ' ' . __("Retrieve event data from mobilize america api.", NS\PLUGIN_TEXT_DOMAIN).'</p>'
+            )
+        );
+		
+       
+        // Field: Regenerate Class Owners
+        self::$wposa_obj->add_field(
+            'mz_mobilize_america_shortcodes',
+            array(
+                'id'      => 'attribute_listing',
+                'type'    => 'html',
+                'name'    => __("Shortcode Atts", NS\PLUGIN_TEXT_DOMAIN),
+                'desc'    => $this->attribute_descriptions()
             )
         );
         
         
     }
     
-    private function access_codes(){
+    private function attribute_descriptions(){
         $return = '';
-        $return .= '<p>'.sprintf('[%1$s]', 'mobilize_display_events', __("List events for specific organization.", NS\PLUGIN_TEXT_DOMAIN)).'</p>';
-        $return .= '<p>'.sprintf('[%1$s] %2$s', 'mobilize_display_organizations', __("List organizations", NS\PLUGIN_TEXT_DOMAIN)).'</p>';
-        $return .= '<H3>' . __("Shortcode Atts: ", NS\PLUGIN_TEXT_DOMAIN) . "</h3>";
         $return .= "<ul>";
+        $return .= "<li><strong>endpoint</strong>: " . __("Which endpoint to query (default: organizations).", NS\PLUGIN_TEXT_DOMAIN)."</li>";
         $return .= "<li><strong>query_string</strong>: " . __("(query string) to append to end of API call", NS\PLUGIN_TEXT_DOMAIN)."</li>";
-        $return .= "</ul>";
-        $return .= '<p>'.sprintf('Example: [%1$s  %2$s]', 'mobilize_display_events', htmlentities('query_string="timeslot_start=gte_1514764800&timeslot_start=lt_1515110400"')).'</p>';
+        $return .= "<li><strong>full_listing_text</strong>: " . __("(default) Click Here for Full Listings &amp; Submission", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>sign_up_text</strong>: " . __("(default) Sign Up", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>failure_to_retrieve</strong>: " . __("(default) Unable to retrieve listings at this time.", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>no_events_message</strong>: " . __("(default) We don't have any listings at this time. Click below to get involved or informed.", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>container_class</strong>: " . __("(default) loader", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>loading_text</strong>: " . __("(default) Loading...", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>container_id</strong>: " . __("(default) MobilizeEvents", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>per_page</strong>: " . __("Override number of listings to request (overridden by query string atts if present)", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>organization_id</strong>: " . __("Override id of Org to request data for (overridden by query string atts if present)", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>template_suffix</strong>: " . sprintf( "Load template file with endpoing + suffix. (<code>_red</code> seeks: %s.)", "<code>theme/templates/mobilize_america/[endpoint]_red</code>" ) . "</li>";
+        $return .= "</ul>";        
+        
+        $return .= '<p>'.sprintf('Example: [%1$s  %2$s]', 'mobilize_america endpoint="events"', htmlentities('query_string="organization_id=1234&per_page=150"')).'</p>';
 
         return $return;
     }
