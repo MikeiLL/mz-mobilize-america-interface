@@ -22,19 +22,19 @@ class Display extends ShortCode\ShortCode_Script_Loader {
 
         $this->atts = shortcode_atts( array(
 			'endpoint' => 'organizations',
-			'full_listing_text' => __('Click Here for Full Listings &amp; Submission', 'mobilize-america'),
-			'sign_up_text' => __('Sign Up', 'mobilize-america'),
 			'organization_id' => 0,
 			'per_page' => '',
-			'events_feed' => '',
-			'event_count' => '5',
-			'query_string' => 0,
+			'full_listing_text' => __('Click Here for Full Listings &amp; Submission', NS\PLUGIN_TEXT_DOMAIN),
+			'sign_up_text' => __('Sign Up', NS\PLUGIN_TEXT_DOMAIN),
+			'failure_to_retrieve' => __("Unable to retrieve listings at this time.", NS\PLUGIN_TEXT_DOMAIN),
+			'no_events_message' => __("We don't have any listings at this time. Click below to get involved or informed.", NS\PLUGIN_TEXT_DOMAIN),
 			'container_class' => 'loader',
-			'loading_text' => -__('Loading...', 'mobilize-america'),
+			'loading_text' => -__('Loading...', NS\PLUGIN_TEXT_DOMAIN),
 			'container_id' => 'MobilizeEvents',
-			'failure_to_retrieve' => __("Unable to retrieve listings at this time.", 'mobilize-america'),
-			'no_events_message' => __("We don't have any listings at this time. Click below to get involved or informed.", 'mobilize-america'),
 			'thumbnail' => 0,
+			'events_feed' => '',
+			'query_string' => 0,
+			'template_suffix' => '',
 			'other_orgs' => 0
 				), $atts );
 
@@ -44,13 +44,13 @@ class Display extends ShortCode\ShortCode_Script_Loader {
         
         //
         $this->atts['endpoint'] = strtolower($this->atts['endpoint']);
-        
+
         $api_result = $this->request_data();
         ob_start();
         $template_loader = new Libraries\Template_Loader();
         $template_loader->set_template_data( ['atts' => $this->atts, 'api_result' => $api_result] );
-        $template_loader->get_template_part( $this->atts['endpoint'] );
-        
+        $template_loader->get_template_part( $this->atts['endpoint'] . $this->atts['template_suffix'] );
+        //print_r($this->atts['endpoint'] . $this->atts['template_suffix']);
         return ob_get_clean();
         
     }
@@ -192,18 +192,7 @@ class Display extends ShortCode\ShortCode_Script_Loader {
         return $result;
     }
 
-    /*
-     *
-     *
-     */
-    private function sequence_events($event_data) {
-        // Break each event into multiple events if
-
-        usort($event_data, function( $a, $b ) {
-                return $a->timeslots[0]->start_date - $b->timeslots[0]->start_date;
-            });
-        return $event_data;
-    }
+    
 }
 
 ?>
