@@ -82,9 +82,17 @@ class API {
         
         $url = (!empty($query_array)) ? $url . '?' . http_build_query($query_array) : $url;
         
+        echo "<pre>";
+        print_r($url);
+        
+        echo "</pre>";
         $url = htmlentities($url);
+        echo "<pre>";
+        print_r($url);
+        
+        echo "</pre>";
         		
-		$response = wp_remote_post( $url, 
+		$response = wp_remote_post( "https://api.mobilize.us/v1/organizations?amp=&organization_id=1&page=2&per_page=15", 
 			array(
 				'method' => $method,
 				'timeout' => 45,

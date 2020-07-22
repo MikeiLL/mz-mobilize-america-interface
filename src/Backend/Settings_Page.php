@@ -43,11 +43,19 @@ class Settings_Page {
             )
         );
         
-		// Section: Basic Settings.
+		// Section: Shortcode and Atts.
         self::$wposa_obj->add_section(
             array(
                 'id'    => 'mz_mobilize_america_shortcodes',
                 'title' => __( 'Shortcodes', NS\PLUGIN_TEXT_DOMAIN ),
+            )
+        );
+        
+		// Section: Shortcode and Atts.
+        self::$wposa_obj->add_section(
+            array(
+                'id'    => 'mz_mobilize_america_instructions',
+                'title' => __( 'Instructions', NS\PLUGIN_TEXT_DOMAIN ),
             )
         );
        
@@ -108,6 +116,17 @@ class Settings_Page {
             )
         );
         
+        // Field: Regenerate Class Owners
+        self::$wposa_obj->add_field(
+            'mz_mobilize_america_instructions',
+            array(
+                'id'      => 'intro',
+                'type'    => 'html',
+                'name'    => __("Template-based customization", NS\PLUGIN_TEXT_DOMAIN),
+                'desc'    => $this->intro()
+            )
+        );
+        
         
     }
     
@@ -133,6 +152,18 @@ class Settings_Page {
         return $return;
     }
     
+    
+    private function intro(){
+        $return = '';
+        $return .= <<<EOD
+<p>This is a very minimal plugin. Data returned from the Mobilize America is called with a shortcode and displayed via template files, which
+can be overridden in a theme.</p>
+<p>Template files are located at <code>src/Frontend/views/</code> and can be overridden in your theme by copying them (or just making new ones)
+to <code>YourTheme/templates/mobilize_america/[endpoint]_red</code>, where <code>[endpoint]</code> is one of <code>events</code> or <code>organizations</code>.</p>
+<p>To view the raw data returned from the API, you may use shortcode <code>[mobilize_america endpoint="events" template_suffix="_raw"]</code> (or substitute the organizations endpoint).</p>
+EOD;
+        return $return;
+    }
     
 
 }
