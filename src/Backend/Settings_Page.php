@@ -91,6 +91,17 @@ class Settings_Page {
                 'desc'    => __( 'Yes. Just testing for now.', NS\PLUGIN_TEXT_DOMAIN )
             )
         );
+       
+        // Field: Regenerate Class Owners
+        self::$wposa_obj->add_field(
+            'mz_mobilize_america_settings',
+            array(
+                'id'      => 'use_ajax',
+                'type'    => 'checkbox',
+                'name'    => __( 'Use Ajax', NS\PLUGIN_TEXT_DOMAIN ),
+                'desc'    => __( 'Retrieve API results asynchronously.', NS\PLUGIN_TEXT_DOMAIN )
+            )
+        );
 		
        
         // Field: Regenerate Class Owners
