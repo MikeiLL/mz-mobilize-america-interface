@@ -1,39 +1,71 @@
 <?php
 namespace MZ_Mobilize_America\Common;
 
-/* 
- * API Error Object
- * @since 1.0.0
+use MZ_Mobilize_America as NS;
+/*
+ * The API Class
  *
- * Hold and display information about errors calling the api
+ * @since 1.0.0
+ * 
+ * Makes request, referencing shortcode_atts, and holds retrieved data.
+ * Provides methods to get links for next and previous.
+ *
+ * @usedby NS\Display
+ *
  */
-class ApiError {
-    public $message = "";
-    
-    public function __construct($message){
-        $this->message = $message;
-    }
-}
-
 class API {
+
+    /*
+     * Next Page
+     * 
+     * @since 1.0.0
+     *
+     * @visibility public
+     *
+     * This is the next page retrieved from the API
+     */
+    private $next_page;
+    
+    /*
+     * Previous Page
+     * 
+     * @since 1.0.0
+     *
+     * @visibility public
+     *
+     * Previous page retrieved from the API
+     *
+     */
+    private $previous_page;
      
     
     /*
      * Shortcode Attributes
+     *
      * @since 1.0.0
      * 
      * @visibility private
      */
     private $shortcode_atts;
     
+    /*
+     * Request Results
+     *
+     * @since 1.0.0
+     * 
+     * @visibility public
+     */
+    public $request_results;
+    
     
     /*
      * Basic Restful Request
+     *
      * @since 1.0.0
      * 
      *  
      */
-    public function __construct($shortcode_atts = []){
+    public function __construct($shortcode_atts = [], $api_result = 0){
         $this->shortcode_atts = $shortcode_atts;
     }
     
@@ -101,7 +133,10 @@ class API {
 			self::alert_admin($error_message);
 			return "Error: " . $error_message;
 		} else {
-		    return json_decode($response['body']);
+		    $response_body = json_decode($response['body']);
+		    $this->next_page = $response_body->next;
+		    $this->previous_page = $response_body->previous;
+		    return $response_body;
 		}	
     }
     
@@ -140,7 +175,6 @@ class API {
         } else {
             $query_array = $defaults;
         }
-        print_r($query_array);
         
         return $query_array;
      }
@@ -171,17 +205,90 @@ class API {
      */
     public function make_request($data = false) {
     
-        $response = self::callApi($data);
+        $this->request_results = self::callApi($data);
 
-        if (!empty($response->error)) {
-            return new ApiError($response->error);
+        if (!empty($this->request_results->error)) {
             self::alert_admin(print_r($response->error, True));
-        } else if (!$response->count >= 1) {
-            return new ApiError("Zero Count");
+            throw new Exception($response->error);
+        } else if (!$this->request_results->count >= 1) {
+            throw new Exception("Zero Count");
         }
 
-        return $response;
+        return $this->request_results;
         
+    }
+    
+    /*
+     * Add query vars
+     * 
+     * @since 1.0.0
+     * 
+     * @param $url_string, generally returned from Mobilize API
+     * @return int the page referenced in the url's query string, or 0 if not present
+     */
+    public function get_page_query($url_string){
+    
+        $url_array = wp_parse_url($url_string);
+        
+        if (empty($url_array['query'])) return 0;
+        
+        $query_args = wp_parse_args($url_array['query']);
+
+        if (empty($query_args['page'])) return 0;
+        
+        return $query_args['page'];
+    }
+    
+    
+    /*
+     * Get Next Page URL
+     * 
+     * @since 1.0.0
+     *
+     * @return False or string url of with mobilize_page query string for subsequent listings
+     */
+    public function get_next(){
+        $next_page_query = $this->get_page_query($this->next_page);
+        if (False == $next_page_query) {
+            return 0;
+        }
+        return add_query_arg('mobilize_page', $next_page_query, get_the_permalink());
+    }
+    
+    /*
+     * Get Previous Page URL
+     * 
+     * @since 1.0.0
+     *
+     * @return False or string url of with mobilize_page query string for previous listings
+     */
+    public function get_previous(){
+        $prev_page_query = $this->get_page_query($this->previous_page);
+        if (False == $prev_page_query) {
+            return 0;
+        }
+        return add_query_arg('mobilize_page', $prev_page_query, get_the_permalink());
+    }
+    
+    /*
+     * Get Page Navigation
+     * 
+     * @since 1.0.0
+     *
+     * @return string HTML built from get_previous and get_next
+     */
+    public function get_navigation(){
+        $return = '<div class="mobilize-nav" role="navigation">';
+        $previous = $this->get_previous();
+        $next = $this->get_next();
+        if ($previous){
+            $return .= '<a class="float-left" href="' . $previous . '">' . __("Previous", NS\PLUGIN_TEXT_DOMAIN) . '</a>';
+        }
+        if ($next){
+            $return .= '<a class="float-right" href="' . $next . '">' . __("Next", NS\PLUGIN_TEXT_DOMAIN) . '</a>';
+        }
+        $return .= '</div>';
+        return $return;
     }
 }
 

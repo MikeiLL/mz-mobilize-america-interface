@@ -2,7 +2,7 @@
 namespace MZ_Mobilize_America\Common;
 
 class Helpers {
-
+    
     /*
      * Sequence Events
      * 

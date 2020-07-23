@@ -29,7 +29,7 @@ class Display extends ShortCode\ShortCode_Script_Loader {
 			'failure_to_retrieve' => __("Unable to retrieve listings at this time.", NS\PLUGIN_TEXT_DOMAIN),
 			'no_events_message' => __("We don't have any listings at this time. Click below to get involved or informed.", NS\PLUGIN_TEXT_DOMAIN),
 			'container_class' => 'loader',
-			'loading_text' => -__('Loading...', NS\PLUGIN_TEXT_DOMAIN),
+			'loading_text' => -__('Loading&#8230;', NS\PLUGIN_TEXT_DOMAIN),
 			'container_id' => 'MobilizeEvents',
 			'thumbnail' => 0,
 			'events_feed' => '',
@@ -48,10 +48,17 @@ class Display extends ShortCode\ShortCode_Script_Loader {
         
         $this->atts['endpoint'] = strtolower($this->atts['endpoint']);
 
-        $api_result = $this->request_data();
+        $api_object = new Common\API($this->atts);
+                
+        try {
+            $api_object->make_request(false);
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "<br>";
+        }
+        
         ob_start();
         $template_loader = new Libraries\Template_Loader();
-        $template_loader->set_template_data( ['atts' => $this->atts, 'api_result' => $api_result] );
+        $template_loader->set_template_data( ['atts' => $this->atts, 'api_object' => $api_object] );
         $template_file = $template_loader->get_template_part( $this->atts['endpoint'] . $ajax_template .$this->atts['template_suffix'] );
         
         if (empty($template_file)) return __("Template file does not exist.", NS\PLUGIN_TEXT_DOMAIN);

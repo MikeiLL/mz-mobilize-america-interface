@@ -152,7 +152,7 @@ class Settings_Page {
         $return .= "<li><strong>no_events_message</strong>: " . __("(default) We don't have any listings at this time. Click below to get involved or informed.", NS\PLUGIN_TEXT_DOMAIN)."</li>";
         $return .= "<li><strong>container_class</strong>: " . __("(default) loader", NS\PLUGIN_TEXT_DOMAIN)."</li>";
         $return .= "<li><strong>loading_text</strong>: " . __("(default) Loading...", NS\PLUGIN_TEXT_DOMAIN)."</li>";
-        $return .= "<li><strong>container_id</strong>: " . __("(default) MobilizeEvents", NS\PLUGIN_TEXT_DOMAIN)."</li>";
+        $return .= "<li><strong>container_id</strong>: " . __("(default) MobilizeEvents. The CSS container class in template page.", NS\PLUGIN_TEXT_DOMAIN)."</li>";
         $return .= "<li><strong>per_page</strong>: " . __("Override number of listings to request (overridden by query string atts if present)", NS\PLUGIN_TEXT_DOMAIN)."</li>";
         $return .= "<li><strong>organization_id</strong>: " . __("Override id of Org to request data for (overridden by query string atts if present)", NS\PLUGIN_TEXT_DOMAIN)."</li>";
         $return .= "<li><strong>template_suffix</strong>: " . sprintf( "Load template file with endpoing + suffix. (<code>_red</code> seeks: %s.)", "<code>theme/templates/mobilize_america/[endpoint]_red</code>" ) . "</li>";
