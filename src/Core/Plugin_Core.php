@@ -3,6 +3,7 @@ namespace MZ_Mobilize_America\Core;
 
 use MZ_Mobilize_America as NS;
 use MZ_Mobilize_America\Admin as Admin;
+use MZ_Mobilize_America\Common as Common;
 use MZ_Mobilize_America\Backend as Backend;
 use MZ_Mobilize_America\Display as Display;
 use MZ_Mobilize_America\Frontend as Frontend;
@@ -139,11 +140,13 @@ class Plugin_Core {
 
 		$plugin_public = new Frontend\Frontend( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
         $display_object = new Display\Display();
+        $helper_object = new Common\Helpers();
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'wp_ajax_nopriv_mobilize_america_events', $event_object, 'return_events' );
 		$this->loader->add_action( 'wp_ajax_mobilize_america_events', $event_object, 'return_events' );
+		$this->loader->add_filter( 'query_vars', $helper_object, 'add_query_vars' );
 
 	}
 

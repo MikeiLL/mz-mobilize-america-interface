@@ -122,9 +122,12 @@ class API {
         
         $ma_options = get_option('mz_mobilize_america_settings');
         
+        $page = get_query_var('mobilize_page', 0);
+        
         $defaults = [
             'organization_id' => !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'],
-            'per_page' => !empty($this->shortcode_atts['per_page']) ? $this->shortcode_atts['per_page'] : $ma_options['per_page']
+            'per_page' => !empty($this->shortcode_atts['per_page']) ? $this->shortcode_atts['per_page'] : $ma_options['per_page'],
+            'page' => !empty($page) ? $page : ''
         ];
         
         // Unset empty default values
@@ -137,6 +140,7 @@ class API {
         } else {
             $query_array = $defaults;
         }
+        print_r($query_array);
         
         return $query_array;
      }

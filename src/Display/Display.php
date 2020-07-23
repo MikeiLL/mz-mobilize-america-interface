@@ -41,16 +41,21 @@ class Display extends ShortCode\ShortCode_Script_Loader {
         // Add Style with script adder
         self::addScript();
         self::localizeScript($this->atts);
+                
+        $ma_options = get_option('mz_mobilize_america_settings');
+        		                
+        $ajax_template = $ma_options['use_ajax'] == 'on' ? '_ajax' : '';
         
-        //
         $this->atts['endpoint'] = strtolower($this->atts['endpoint']);
 
         $api_result = $this->request_data();
         ob_start();
         $template_loader = new Libraries\Template_Loader();
         $template_loader->set_template_data( ['atts' => $this->atts, 'api_result' => $api_result] );
-        $template_loader->get_template_part( $this->atts['endpoint'] . $this->atts['template_suffix'] );
-        //print_r($this->atts['endpoint'] . $this->atts['template_suffix']);
+        $template_file = $template_loader->get_template_part( $this->atts['endpoint'] . $ajax_template .$this->atts['template_suffix'] );
+        
+        if (empty($template_file)) return __("Template file does not exist.", NS\PLUGIN_TEXT_DOMAIN);
+        
         return ob_get_clean();
         
     }
@@ -58,9 +63,9 @@ class Display extends ShortCode\ShortCode_Script_Loader {
     public function addScript() {
         if (!self::$addedAlready) {
             self::$addedAlready = true;
-            wp_register_script('mobilize_events_script', NS\PLUGIN_NAME_URL . 'inc/frontend/js/events.js', array('jquery'), 1.0, true );
+            wp_register_script('mobilize_events_script', NS\PLUGIN_NAME_URL . 'src/Frontend/js/display.js', array('jquery'), 1.0, true );
  	        wp_enqueue_script('mobilize_events_script');
-            wp_register_style( 'mobilize_events_style', NS\PLUGIN_NAME_URL . 'inc/frontend/css/events.css');
+            wp_register_style( 'mobilize_events_style', NS\PLUGIN_NAME_URL . 'src/Frontend/css/display.css');
             wp_enqueue_style('mobilize_events_style');
         }
     }
