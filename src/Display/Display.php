@@ -70,17 +70,17 @@ class Display extends ShortCode\ShortCode_Script_Loader {
     public function addScript() {
         if (!self::$addedAlready) {
             self::$addedAlready = true;
-            wp_register_script('mobilize_events_script', NS\PLUGIN_NAME_URL . 'src/Frontend/js/display.js', array('jquery'), 1.0, true );
- 	        wp_enqueue_script('mobilize_events_script');
-            wp_register_style( 'mobilize_events_style', NS\PLUGIN_NAME_URL . 'src/Frontend/css/display.css');
-            wp_enqueue_style('mobilize_events_style');
+            wp_register_script('mobilize_america_display_script', NS\PLUGIN_NAME_URL . 'src/Frontend/js/display.js', array('jquery'), NS\PLUGIN_VERSION, true );
+ 	        wp_enqueue_script('mobilize_america_display_script');
+            wp_register_style( 'mobilize_america_display_style', NS\PLUGIN_NAME_URL . 'src/Frontend/css/display.css', [], NS\PLUGIN_VERSION);
+            wp_enqueue_style('mobilize_america_display_style');
         }
     }
 
     public static function localizeScript($atts = []) {
 
         $protocol = isset( $_SERVER["HTTPS"]) ? 'https://' : 'http://';
-        $nonce = wp_create_nonce( 'mobilize_america_events_nonce');
+        $nonce = wp_create_nonce( 'mobilize_america_display_nonce');
         $params = array(
             'ajaxurl' => admin_url( 'admin-ajax.php', $protocol ),
             'nonce' => $nonce,

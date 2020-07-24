@@ -20,7 +20,7 @@ class API {
      * 
      * @since 1.0.0
      *
-     * @visibility public
+     * @visibility private
      *
      * This is the next page retrieved from the API
      */
@@ -31,12 +31,24 @@ class API {
      * 
      * @since 1.0.0
      *
-     * @visibility public
+     * @visibility private
      *
      * Previous page retrieved from the API
      *
      */
     private $previous_page;
+    
+    /*
+     * Pagination Details
+     * 
+     * @since 1.0.0
+     *
+     * @visibility public
+     *
+     * @array of details about pagination for current request
+     *
+     */
+    public $pagination_details;
      
     
     /*
@@ -56,6 +68,15 @@ class API {
      * @visibility public
      */
     public $request_results;
+    
+    /*
+     * Current Page via Query
+     *
+     * @since 1.0.0
+     * 
+     * @visibility public
+     */
+    public $current_page_via_query;
     
     
     /*
@@ -157,12 +178,12 @@ class API {
         
         $ma_options = get_option('mz_mobilize_america_settings');
         
-        $page = get_query_var('mobilize_page', 0);
+        $this->current_page_via_query = get_query_var('mobilize_page', 0);
         
         $defaults = [
             'organization_id' => !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'],
             'per_page' => !empty($this->shortcode_atts['per_page']) ? $this->shortcode_atts['per_page'] : $ma_options['per_page'],
-            'page' => !empty($page) ? $page : ''
+            'page' => !empty($this->current_page_via_query) ? $this->current_page_via_query : ''
         ];
         
         // Unset empty default values
@@ -224,9 +245,10 @@ class API {
      * @since 1.0.0
      * 
      * @param $url_string, generally returned from Mobilize API
+     * @param $arg which query argument to return
      * @return int the page referenced in the url's query string, or 0 if not present
      */
-    public function get_page_query($url_string){
+    public function get_query($url_string, $arg = 'page'){
     
         $url_array = wp_parse_url($url_string);
         
@@ -234,9 +256,9 @@ class API {
         
         $query_args = wp_parse_args($url_array['query']);
 
-        if (empty($query_args['page'])) return 0;
+        if (empty($query_args[$arg])) return 1;
         
-        return $query_args['page'];
+        return $query_args[$arg];
     }
     
     
@@ -248,7 +270,7 @@ class API {
      * @return False or string url of with mobilize_page query string for subsequent listings
      */
     public function get_next(){
-        $next_page_query = $this->get_page_query($this->next_page);
+        $next_page_query = $this->get_query($this->next_page, 'page');
         if (False == $next_page_query) {
             return 0;
         }
@@ -263,7 +285,7 @@ class API {
      * @return False or string url of with mobilize_page query string for previous listings
      */
     public function get_previous(){
-        $prev_page_query = $this->get_page_query($this->previous_page);
+        $prev_page_query = $this->get_query($this->previous_page, 'page');
         if (False == $prev_page_query) {
             return 0;
         }
@@ -271,14 +293,14 @@ class API {
     }
     
     /*
-     * Get Page Navigation
+     * Get Step Navigation
      * 
      * @since 1.0.0
      *
      * @return string HTML built from get_previous and get_next
      */
-    public function get_navigation(){
-        $return = '<div class="mobilize-nav" role="navigation">';
+    public function get_step_navigation(){
+        $return = '<div class="mobilize-step-nav" role="navigation">';
         $previous = $this->get_previous();
         $next = $this->get_next();
         if ($previous){
@@ -289,6 +311,114 @@ class API {
         }
         $return .= '</div>';
         return $return;
+    }
+    
+    /*
+     * Get Numeric Navigation
+     * 
+     * @since 1.0.0
+     *
+     * @return string HTML with numeric data pagination links
+     */
+    public function get_numeric_navigation(){
+        // TODO display a limited number of pages with navigation.
+        $this->pagination_details = $this->get_segment_info();
+        $return = '<ul class="mobilize-numeric-nav" role="navigation">';
+        foreach (range(1, $this->pagination_details['number_of_pages']) as $page) {
+            if ($this->current_page_via_query == $page) {
+                $return .= '<li class="nav-item-' . $page .'"><span class="current_page">' . $page . '</span></li>';
+            } else {
+                $return .= '<li class="nav-item-' . $page .'"><a class="inactive" href="' . add_query_arg('mobilize_page', $page, get_the_permalink()) .'">' . $page . '</a></li>';
+            }
+            
+        }
+        $return .= '</ul>';
+        return $return;
+    }
+    
+    
+    /*
+     * Current Page
+     * 
+     * @since 1.0.0
+     *
+     * @return int Current Page
+     */
+    public function current_page(){
+        if (empty($this->previous_page)){
+            return 1;
+        }
+        $prev_page_query = $this->get_query($this->previous_page, 'page');
+        if (empty($prev_page_query)){
+            return 1;
+        } else {
+            return $prev_page_query + 1;
+        }
+        return 0;
+    }
+    
+    /*
+     * Results Per Page
+     * 
+     * @since 1.0.0
+     *
+     * @return int Requested per page count or the default which is 25
+     */
+    public function results_per_page(){
+        $per_page = $this->parse_query_string()['per_page'];
+        return (!empty($per_page)) ? $per_page : 25;
+    }
+    
+    
+    /*
+     * Get Segment Info
+     * 
+     * @since 1.0.0
+     * 
+     *
+     * @return array containing information about the segment returned of total request results
+     */
+    public function get_segment_info(){
+        $total_results = $this->request_results->count;
+        $current_result_count = count($this->request_results->data);
+        $current_page = $this->current_page();
+        $current_segment_start = $current_result_count * $current_page - ($current_result_count - 1); 
+        $current_segment_end = $current_result_count * $current_page; 
+        $number_of_pages = ceil($total_results / $this->results_per_page()); 
+        return [
+            'current_segment_start' => $current_segment_start,
+            'current_segment_end' => $current_segment_end,
+            'total_results' => $total_results,
+            'current_page' => $current_page, 
+            'number_of_pages' => $number_of_pages
+        ];;
+    }
+    
+    
+    /*
+     * Display Segment Info
+     * 
+     * @since 1.0.0
+     * 
+     *
+     * @return array containing information about the segment returned of total request results
+     */
+    public function display_segment_info(){
+        $this->pagination_details = $this->get_segment_info();
+        return sprintf(__("Results %1d - %2d of %3d.", NS\PLUGIN_TEXT_DOMAIN), $this->pagination_details['current_segment_start'], $this->pagination_details['current_segment_end'], $this->pagination_details['total_results']);
+    }
+    
+    /*
+     * Display Pagination Info
+     * 
+     * @since 1.0.0
+     * 
+     *
+     * @return array containing information about the segment returned of total request results
+     */
+    public function display_pagination_info(){
+        $this->pagination_details = $this->get_segment_info();
+        return sprintf(__("Page %1d of %2d.", NS\PLUGIN_TEXT_DOMAIN), $this->pagination_details['current_page'], $this->pagination_details['number_of_pages']);
     }
 }
 

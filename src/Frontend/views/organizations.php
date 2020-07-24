@@ -1,8 +1,14 @@
 <div class="<?php echo $data->atts['container_id']; ?>">
 <?php
 use MZ_Mobilize_America as NS;
+// echo "<pre>";
+// print_r($data->api_object);
+// echo "</pre>";
 ?>
-<?php echo $data->api_object->get_navigation(); ?>
+<span><?php echo $data->api_object->display_segment_info(); ?></span>
+<span><?php echo $data->api_object->display_pagination_info(); ?></span>
+<?php echo $data->api_object->get_numeric_navigation(); ?>
+<?php echo $data->api_object->get_step_navigation(); ?>
 <table class="">
 <?php
 
@@ -11,5 +17,5 @@ foreach($data->api_object->request_results->data as $k => $org){ ?>
 <?php } ?>
 
 </table>
-<?php echo $data->api_object->get_navigation(); ?>
+<?php echo $data->api_object->get_step_navigation(); ?>
 </div>
