@@ -1,9 +1,6 @@
 <div class="<?php echo $data->atts['container_id']; ?>">
 <?php
 use MZ_Mobilize_America as NS;
-// echo "<pre>";
-// print_r($data->api_object);
-// echo "</pre>";
 ?>
 <span><?php echo $data->api_object->display_segment_info(); ?></span>
 <span><?php echo $data->api_object->display_pagination_info(); ?></span>

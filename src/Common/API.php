@@ -232,7 +232,7 @@ class API {
             self::alert_admin(print_r($response->error, True));
             throw new Exception($response->error);
         } else if (!$this->request_results->count >= 1) {
-            throw new Exception("Zero Count");
+            throw new \Exception("Zero Count");
         }
 
         return $this->request_results;

@@ -52,8 +52,8 @@ class Display extends ShortCode\ShortCode_Script_Loader {
                 
         try {
             $api_object->make_request(false);
-        } catch (Exception $e) {
-            echo 'Caught exception: ',  $e->getMessage(), "<br>";
+        } catch (\Exception $e) {
+            return ($e->getMessage() == 'Zero Count') ? $this->atts['no_events_message'] : $this->atts['failure_to_retrieve'];
         }
         
         ob_start();
