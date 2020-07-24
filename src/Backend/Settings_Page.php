@@ -74,6 +74,17 @@ class Settings_Page {
         self::$wposa_obj->add_field(
             'mz_mobilize_america_settings',
             array(
+                'id'      => 'button_class',
+                'type'    => 'text',
+                'name'    => __( 'CSS class to use for buttons', NS\PLUGIN_TEXT_DOMAIN ),
+                'desc'    => __( 'Used in templates. Default is "btn mobilize".', NS\PLUGIN_TEXT_DOMAIN )
+            )
+        );
+       
+        // Field: Regenerate Class Owners
+        self::$wposa_obj->add_field(
+            'mz_mobilize_america_settings',
+            array(
                 'id'      => 'per_page',
                 'type'    => 'number',
                 'name'    => __( 'Default number of listings to request', NS\PLUGIN_TEXT_DOMAIN ),

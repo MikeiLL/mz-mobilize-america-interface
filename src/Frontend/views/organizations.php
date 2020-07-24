@@ -10,7 +10,7 @@ use MZ_Mobilize_America as NS;
 <?php
 
 foreach($data->api_object->request_results->data as $k => $org){ ?>
-    <tr><td><?php echo $org->id; ?></td><td><?php echo $org->name; ?></td>
+    <tr><td><?php echo $org->id; ?></td><td><?php echo $org->name; ?></td></tr>
 <?php } ?>
 
 </table>

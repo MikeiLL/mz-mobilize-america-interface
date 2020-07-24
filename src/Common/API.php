@@ -419,6 +419,7 @@ class API {
      */
     public function display_pagination_info(){
         $this->pagination_details = $this->get_segment_info();
+        if ($this->pagination_details['number_of_pages'] == 1) return;
         return sprintf(__("Page %1d of %2d.", NS\PLUGIN_TEXT_DOMAIN), $this->pagination_details['current_page'], $this->pagination_details['number_of_pages']);
     }
 }

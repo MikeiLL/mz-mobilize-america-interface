@@ -46,6 +46,8 @@ class Display extends ShortCode\ShortCode_Script_Loader {
         		                
         $ajax_template = $ma_options['use_ajax'] == 'on' ? '_ajax' : '';
         
+        $this->atts['button_class'] = !empty($ma_options['button_class']) ? $ma_options['button_class'] : 'btn mobilize';
+        
         $this->atts['endpoint'] = strtolower($this->atts['endpoint']);
 
         $api_object = new Common\API($this->atts);
