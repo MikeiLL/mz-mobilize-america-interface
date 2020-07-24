@@ -324,6 +324,7 @@ class API {
         // TODO display a limited number of pages with navigation.
         $this->pagination_details = $this->get_segment_info();
         $return = '<ul class="mobilize-numeric-nav" role="navigation">';
+        if ($this->pagination_details['number_of_pages'] <= 3) return;
         foreach (range(1, $this->pagination_details['number_of_pages']) as $page) {
             if ($this->current_page_via_query == $page) {
                 $return .= '<li class="nav-item-' . $page .'"><span class="current_page">' . $page . '</span></li>';
