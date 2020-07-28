@@ -29,7 +29,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"MZ_Mobilize_America\\": "src"
+			"MZ_Mobilize_America\\": "src/"
 		},
 		"files": ["vendor/gamajo/template-loader/class-gamajo-template-loader.php"]
 	},
