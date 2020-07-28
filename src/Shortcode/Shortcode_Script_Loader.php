@@ -1,9 +1,6 @@
 <?php
 namespace MZ_Mobilize_America\Shortcode;
 
-use MZ_Mobilize_America\Shortcode as Shortcode;
-
-
 /**
  * "WordPress Plugin Template" Copyright (C) 2018 Michael Simpson  (email : michael.d.simpson@gmail.com)
  * Adapted from this excellent article:
@@ -12,7 +9,7 @@ use MZ_Mobilize_America\Shortcode as Shortcode;
  * The idea is you have a shortcode that needs a script loaded, but you only
  * want to load it if the shortcode is actually called.
  */
-abstract class ShortCode_Script_Loader extends Shortcode\ShortCode_Loader {
+abstract class ShortCode_Script_Loader extends ShortCode_Loader {
 
     var $doAddScript;
 
