@@ -10,7 +10,6 @@ use MZ_Mobilize_America\Libraries as Libraries;
 <?php echo $data->api_object->get_numeric_navigation(); ?>
 <?php echo $data->api_object->get_step_navigation(); ?>
 <?php
-
 foreach($data->api_object->request_results->data as $k => $event){ ?>
     <h5><?php echo $event->title; ?></h5>
     <p><?php echo $event->description; ?></p>
