@@ -2,11 +2,11 @@
 namespace MZ_Mobilize_America\Display;
 
 use MZ_Mobilize_America as NS;
-use MZ_Mobilize_America\ShortCode as ShortCode;
+use MZ_Mobilize_America\Shortcode as Shortcode;
 use MZ_Mobilize_America\Common as Common;
 use MZ_Mobilize_America\Libraries as Libraries;
 
-class Display extends ShortCode\ShortCode_Script_Loader {
+class Display extends Shortcode\Shortcode_Script_Loader {
 
     static $addedAlready = false;
     
