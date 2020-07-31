@@ -110,10 +110,15 @@ class API {
         $subdomain = $ma_options['use_staging'] == 'on' ? 'staging-api' : 'api';
         
         $endpoint = $this->shortcode_atts['endpoint'];
-
-        $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
         
-        $query_array = $this->parse_query_string();
+        $organization_id = !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
+        
+        if ($this->shortcode_atts['other_orgs'] == 1 && $endpoint == 'events'){
+            $url = 'https://' . $subdomain . '.mobilize.us/v1/organizations/' .$organization_id . '/' . $endpoint;
+        } else {
+            $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
+            $query_array = $this->parse_query_string();
+        }
 
         switch($endpoint):
             case "ogranizations":
@@ -136,7 +141,7 @@ class API {
         $url = (!empty($query_array)) ? $url . '?' . http_build_query($query_array) : $url;
         
         $url = htmlentities($url);
-        		
+
 		$response = wp_remote_post( $url, 
 			array(
 				'method' => $method,
@@ -166,7 +171,7 @@ class API {
      * @since 1.0.0
      *
      * If query_string present, parse into a usable array, merge with other shortcodes, build query;
-     * @return query string
+     * @return array of query parameters
      */
      private function parse_query_string(){
         $query_string = $this->shortcode_atts['query_string'];
@@ -196,7 +201,7 @@ class API {
         } else {
             $query_array = $defaults;
         }
-        
+
         return $query_array;
      }
     

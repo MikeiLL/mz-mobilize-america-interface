@@ -3,6 +3,9 @@ use MZ_Mobilize_America\Common as Common;
 use MZ_Mobilize_America\Libraries as Libraries;
 
 ?>
+<pre>
+<?php //print_r($data->api_object->request_results); ?>
+</pre>
 <div class="<?php echo $data->atts['container_id']; ?>">
 
 <span><?php echo $data->api_object->display_segment_info(); ?></span>
@@ -11,6 +14,7 @@ use MZ_Mobilize_America\Libraries as Libraries;
 <?php echo $data->api_object->get_step_navigation(); ?>
 <?php
 foreach($data->api_object->request_results->data as $k => $event){ ?>
+    <img src="<?php echo $event->featured_image_url; ?>">
     <h5><?php echo $event->title; ?></h5>
     <p><?php echo $event->description; ?></p>
     <?php if (isset($event->venue)): ?>
