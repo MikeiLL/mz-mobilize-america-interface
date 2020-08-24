@@ -59,7 +59,7 @@ class Settings_Page {
             )
         );
        
-        // Field: Regenerate Class Owners
+        // Field: Organization ID
         self::$wposa_obj->add_field(
             'mz_mobilize_america_settings',
             array(
@@ -70,7 +70,7 @@ class Settings_Page {
             )
         );
        
-        // Field: Regenerate Class Owners
+        // Field: CSS Field setting
         self::$wposa_obj->add_field(
             'mz_mobilize_america_settings',
             array(
@@ -81,18 +81,18 @@ class Settings_Page {
             )
         );
        
-        // Field: Regenerate Class Owners
+        // Field: Basic per_page configuration
         self::$wposa_obj->add_field(
             'mz_mobilize_america_settings',
             array(
                 'id'      => 'per_page',
                 'type'    => 'number',
-                'name'    => __( 'Default number of listings to request', NS\PLUGIN_TEXT_DOMAIN ),
-                'desc'    => __( 'Default per_page request setting', NS\PLUGIN_TEXT_DOMAIN )
+                'name'    => __( 'Plugin per_page request', NS\PLUGIN_TEXT_DOMAIN ),
+                'desc'    => __( 'Override in shortcodes. (Mobilize default is 25.)', NS\PLUGIN_TEXT_DOMAIN )
             )
         );
        
-        // Field: Regenerate Class Owners
+        // Field: Use Staging API checkbox
         self::$wposa_obj->add_field(
             'mz_mobilize_america_settings',
             array(
@@ -104,18 +104,18 @@ class Settings_Page {
         );
        
         // Field: Regenerate Class Owners
-        self::$wposa_obj->add_field(
-            'mz_mobilize_america_settings',
-            array(
-                'id'      => 'use_ajax',
-                'type'    => 'checkbox',
-                'name'    => __( 'Use Ajax', NS\PLUGIN_TEXT_DOMAIN ),
-                'desc'    => __( 'Retrieve API results asynchronously.', NS\PLUGIN_TEXT_DOMAIN )
-            )
-        );
+        // self::$wposa_obj->add_field(
+        //     'mz_mobilize_america_settings',
+        //     array(
+        //         'id'      => 'use_ajax',
+        //         'type'    => 'checkbox',
+        //         'name'    => __( 'Use Ajax', NS\PLUGIN_TEXT_DOMAIN ),
+        //         'desc'    => __( 'Retrieve API results asynchronously.', NS\PLUGIN_TEXT_DOMAIN )
+        //     )
+        // );
 		
        
-        // Field: Regenerate Class Owners
+        // Field: Basic Shortcode Usage Example
         self::$wposa_obj->add_field(
             'mz_mobilize_america_shortcodes',
             array(
@@ -127,7 +127,7 @@ class Settings_Page {
         );
 		
        
-        // Field: Regenerate Class Owners
+        // Field: Description of Shortcode Atts
         self::$wposa_obj->add_field(
             'mz_mobilize_america_shortcodes',
             array(
@@ -138,7 +138,7 @@ class Settings_Page {
             )
         );
         
-        // Field: Regenerate Class Owners
+        // Field: Plugin Instruction Intro
         self::$wposa_obj->add_field(
             'mz_mobilize_america_instructions',
             array(
@@ -182,8 +182,9 @@ class Settings_Page {
 can be overridden in a theme.</p>
 <p>Template files are located at <code>src/Frontend/views/</code> and can be overridden in your theme by copying them (or just making new ones)
 to <code>YourTheme/templates/mobilize_america/[endpoint]_red</code>, where <code>[endpoint]</code> is one of <code>events</code> or <code>organizations</code>.</p>
-<p>To view the raw data returned from the API, you may use shortcode <code>[mobilize_america endpoint="events" template_suffix="_raw"]</code> (or substitute the organizations endpoint).</p>
+<p>To view the raw data returned from the API, you may use shortcode <code>[mobilize_america endpoint="events" template_suffix="_raw"]</code> (or substitute the "organizations" endpoint).</p>
 EOD;
+        $return .= '<p>Learn more about the api on the Mobilize America <a href="https://github.com/mobilizeamerica/api" target="_blank">Github page</a>.</p>';
         return $return;
     }
     
