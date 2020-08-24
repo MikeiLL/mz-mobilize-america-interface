@@ -239,9 +239,50 @@ class API {
         } else if (!$this->request_results->count >= 1) {
             throw new \Exception("Zero Count");
         }
-
+        
+        // Does it make sense to Sanitize API Request Results here?
+        $this->sanitize_results();
+        
         return $this->request_results;
         
+    }
+    
+    private function sanitize_results() {
+    
+        $this->request_results->data = array_map(function ($item){
+            $item->title = sanitize_text_field($item->title);
+            $item->description = htmlentities($item->description);
+            $item->featured_image_url = esc_url($item->featured_image_url);
+            $item->timeslots = array_map(function($slot){
+                $slot->instructions = htmlentities($slot->instructions);
+                return $slot;
+            }, $item->timeslots);
+            return $item;
+        }, $this->request_results->data);
+        $item->summary = htmlentities($item->summary);
+        $item->accessibility_notes = htmlentities($item->accessibility_notes);
+        $item->virtual_action_url = esc_url($item->virtual_action_url);
+        $item->browser_url = esc_url($item->browser_url);
+        $item->event_type = sanitize_text_field($item->event_type);
+        $item->approval_status = sanitize_text_field($item->approval_status);
+        $item->location = sanitize_text_field($item->location);
+        $item->sponsor->state = sanitize_text_field($item->sponsor->state);
+        $item->sponsor->org_type = sanitize_text_field($item->sponsor->org_type);
+        $item->sponsor->district = sanitize_text_field($item->sponsor->district);
+        $item->sponsor->name = sanitize_text_field($item->sponsor->name);
+        $item->sponsor->candidate_name = sanitize_text_field($item->sponsor->candidate_name);
+        $item->sponsor->race_type = sanitize_text_field($item->sponsor->race_type);
+        $item->sponsor->event_feed_url = esc_url($item->sponsor->event_feed_url);
+        $item->sponsor->slug = sanitize_title($item->sponsor->slug);
+
+        $item->visibility = sanitize_text_field($item->visibility);
+        $item->address_visibility = sanitize_text_field($item->address_visibility);
+        $item->event_campaign = sanitize_text_field($item->event_campaign);
+        $item->timezone = sanitize_text_field($item->timezone);
+        $item->instructions = htmlentities($item->timezone);
+        $item->tags->name = sanitize_text_field($item->tags->name);
+
+        return $this->request_results;
     }
     
     /*
