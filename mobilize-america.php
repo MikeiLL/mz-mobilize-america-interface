@@ -21,8 +21,6 @@
 namespace MZ_Mobilize_America;
 use MZ_Mobilize_America as NS;
 
-
-
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
