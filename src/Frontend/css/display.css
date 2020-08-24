@@ -27,6 +27,12 @@
   background-color: #5c5c5c; /* Green */
 }
 
+/* Images */
+.mobilize-event-image {
+    max-width: 100%;
+    height: auto;
+}
+
 /*
  * Loader
  */
@@ -161,4 +167,12 @@
     flex-wrap: wrap;
     margin-right: -15px;
     margin-left: -15px;
+}
+
+/* Media Queries */
+@media (min-width: 576px) {
+    .mobilize-event-image {
+        max-width: 50%;
+        height: auto;
+    }
 }
