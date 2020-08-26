@@ -16,7 +16,7 @@ use MZ_Mobilize_America\Libraries as Libraries;
 foreach($data->api_object->request_results->data as $k => $event){ ?>
     <h5><?php echo $event->title; ?></h5>
     <p>
-    <?php if (!empty($event->featured_image_url)): ?>
+    <?php if ( ($data->atts['thumbnail'] != false) && !empty($event->featured_image_url) ): ?>
     <img src="<?php echo $event->featured_image_url; ?>" class="mobilize-event-image alignright">
     <?php endif; ?>
     <?php echo $event->description; ?>
