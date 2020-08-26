@@ -5,9 +5,24 @@ use MZ_Mobilize_America as NS;
 use MZ_Mobilize_America\Shortcode as Shortcode;
 use MZ_Mobilize_America\Common as Common;
 use MZ_Mobilize_America\Libraries as Libraries;
+use \Exception as Exception;
 
 class Display extends Shortcode\Shortcode_Script_Loader {
-
+    
+    /*
+     * @since 1.0.0
+     * 
+     * visibility private
+     * Shortcode attribute Errors, if any
+     */
+    private $attribute_errors = [];
+    
+    /*
+     * @since 1.0.0
+     * 
+     * visibility public
+     * If scripts and styles have been enqueued
+     */
     static $addedAlready = false;
     
     /*
@@ -41,51 +56,10 @@ class Display extends Shortcode\Shortcode_Script_Loader {
         // Add Style with script adder
         self::addScript();
         
-        $attribute_errors = [];
-        
-        // Check user input and report errors
-        foreach ($this->atts as $attr => $val) {
-            if (empty($val)) continue;
-            switch ($attr) {
-                case 'query_string':
-                    if ($val != htmlspecialchars($val, ENT_QUOTES)){
-                        array_push($attribute_errors, 'query_string');
-                        break;
-                    }
-                    $this->atts[$attr] = htmlspecialchars($val, ENT_QUOTES);
-                    break;
-                case 'organization_id':
-                    if (!is_numeric($val)){
-                        array_push($attribute_errors, 'organization_id');
-                        break;
-                    };
-                    break;
-                case 'per_page':
-                    if (!is_numeric($val)){
-                        array_push($attribute_errors, 'per_page');
-                        break;
-                    };
-                    break;
-                case 'other_orgs':
-                    $this->atts[$attr] = (boolean) $val;
-                    break;
-                case 'thumbnail':
-                    $attr = (boolean) $val;
-                    break;
-                case 'container_id':
-                    if ($val != sanitize_html_class($val)){
-                        array_push($attribute_errors, 'container_id');
-                        break;
-                    }
-                    $this->atts[$attr] = sanitize_html_class($val);
-                    break;
-                default:
-                   $this->atts[$attr] = sanitize_text_field($val);
-            }
-        }
-           
-        if (!empty($attribute_errors)){
-            return sprintf(__("Errors found in shortcode atts: <code>%1s</code>. Refer to the docs in admin settings and update or remove them.", NS\PLUGIN_TEXT_DOMAIN), implode( ', ' , $attribute_errors ));
+        try {
+            $this->validate_and_sanitize_atts();
+        } catch (Exception $e) {
+            return sprintf(__("Errors found in shortcode atts: <code>%1s</code>. Refer to the docs in admin settings and update or remove them.", NS\PLUGIN_TEXT_DOMAIN), implode( ', ' , $this->attribute_errors ));
         }
         
         self::localizeScript($this->atts);
@@ -143,7 +117,13 @@ class Display extends Shortcode\Shortcode_Script_Loader {
 
         check_ajax_referer( $_REQUEST['nonce'], "mobilize_america_events_nonce", false);
 
-        $atts = $_REQUEST['atts'];
+        $this->atts = $_REQUEST['atts'];
+        
+        try {
+            $this->validate_and_sanitize_atts();
+        } catch (Exception $e) {
+            echo sprintf(__("Errors found in shortcode atts: <code>%1s</code>. Refer to the docs in admin settings and update or remove them.", NS\PLUGIN_TEXT_DOMAIN), implode( ', ' , $attribute_errors ));
+        }
 
         $full_listing_text = $atts['full_listing_text'];
 		$sign_up_text = $atts['sign_up_text'];
@@ -252,6 +232,68 @@ class Display extends Shortcode\Shortcode_Script_Loader {
         $result = $api->make_request(false);
         
         return $result;
+    }
+    
+    /* Verify and Sanitize
+     *
+     * @since 1.0.0
+     *
+     * Sanitize Atts or return error.
+     */
+    public function validate_and_sanitize_atts(){
+        
+        // Check user input and report errors
+        foreach ($this->atts as $attr => $val) {
+            if (empty($val)) continue;
+            switch ($attr) {
+                case 'query_string':
+                    if ($val != htmlspecialchars($val, ENT_QUOTES)){
+                        array_push($this->attribute_errors, 'query_string');
+                        break;
+                    }
+                    $this->atts[$attr] = htmlspecialchars($val, ENT_QUOTES);
+                    break;
+                case 'organization_id':
+                    if (!is_numeric($val)){
+                        array_push($this->attribute_errors, 'organization_id');
+                        break;
+                    };
+                    break;
+                case 'per_page':
+                    if (!is_numeric($val)){
+                        array_push($this->attribute_errors, 'per_page');
+                        break;
+                    };
+                    break;
+                case 'other_orgs':
+                    if (!is_bool($val)){
+                        array_push($this->attribute_errors, 'other_orgs');
+                        break;
+                    }
+                    $this->atts[$attr] = $val;
+                    break;
+                case 'thumbnail':
+                    if (!is_bool($val)){
+                        array_push($this->attribute_errors, 'thumbnail');
+                        break;
+                    }
+                    $this->atts[$attr] = $val;
+                    break;
+                case 'container_id':
+                    if ($val != sanitize_html_class($val)){
+                        array_push($this->attribute_errors, 'container_id');
+                        break;
+                    }
+                    $this->atts[$attr] = sanitize_html_class($val);
+                    break;
+                default:
+                   $this->atts[$attr] = sanitize_text_field($val);
+            }
+        }
+        
+        if (!empty($this->attribute_errors)){
+            throw new Exception('Attribute Errors');
+        }
     }
 
     
