@@ -23,7 +23,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
         $this->atts = shortcode_atts( array(
 			'endpoint' => 'organizations',
 			'organization_id' => 0,
-			'per_page' => '',
+			'per_page' => 0,
 			'full_listing_text' => __('Click Here for Full Listings &amp; Submission', NS\PLUGIN_TEXT_DOMAIN),
 			'sign_up_text' => __('Sign Up', NS\PLUGIN_TEXT_DOMAIN),
 			'failure_to_retrieve' => __("Unable to retrieve listings at this time.", NS\PLUGIN_TEXT_DOMAIN),
@@ -40,6 +40,54 @@ class Display extends Shortcode\Shortcode_Script_Loader {
 
         // Add Style with script adder
         self::addScript();
+        
+        $attribute_errors = [];
+        
+        // Check user input and report errors
+        foreach ($this->atts as $attr => $val) {
+            if (empty($val)) continue;
+            switch ($attr) {
+                case 'query_string':
+                    if ($val != htmlspecialchars($val, ENT_QUOTES)){
+                        array_push($attribute_errors, 'query_string');
+                        break;
+                    }
+                    $this->atts[$attr] = htmlspecialchars($val, ENT_QUOTES);
+                    break;
+                case 'organization_id':
+                    if (!is_numeric($val)){
+                        array_push($attribute_errors, 'organization_id');
+                        break;
+                    };
+                    break;
+                case 'per_page':
+                    if (!is_numeric($val)){
+                        array_push($attribute_errors, 'per_page');
+                        break;
+                    };
+                    break;
+                case 'other_orgs':
+                    $this->atts[$attr] = (boolean) $val;
+                    break;
+                case 'thumbnail':
+                    $attr = (boolean) $val;
+                    break;
+                case 'container_id':
+                    if ($val != sanitize_html_class($val)){
+                        array_push($attribute_errors, 'container_id');
+                        break;
+                    }
+                    $this->atts[$attr] = sanitize_html_class($val);
+                    break;
+                default:
+                   $this->atts[$attr] = sanitize_text_field($val);
+            }
+        }
+           
+        if (!empty($attribute_errors)){
+            return sprintf(__("Errors found in shortcode atts: <code>%1s</code>. Refer to the docs in admin settings and update or remove them.", NS\PLUGIN_TEXT_DOMAIN), implode( ', ' , $attribute_errors ));
+        }
+        
         self::localizeScript($this->atts);
                 
         $ma_options = get_option('mz_mobilize_america_settings');
