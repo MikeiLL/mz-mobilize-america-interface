@@ -160,14 +160,14 @@ class Display extends Shortcode\Shortcode_Script_Loader {
                     };
                     break;
                 case 'other_orgs':
-                    if (!is_bool($val)){
+                    if (!filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)){
                         array_push($this->attribute_errors, 'other_orgs');
                         break;
                     }
                     $this->atts[$attr] = $val;
                     break;
                 case 'thumbnail':
-                    if (!is_bool($val)){
+                    if (!filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)){
                         array_push($this->attribute_errors, 'thumbnail');
                         break;
                     }
