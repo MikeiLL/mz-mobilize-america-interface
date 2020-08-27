@@ -14,6 +14,10 @@ Simple interface for displaying Mobilize America Events from their API via Short
 
 Simple interface for displaying events from Mobilize America's API via shortcode. Customize the display using template files in your theme.
 
+ * This is _only an interface_ between your WP install and Mobilize America, provided free, with no guarantees.
+ * Visit [Mobilize America](https://join.mobilize.us) more info on this galvanization tool.
+ * Check Mobilize America's [Terms and Conditions](https://join.mobilize.us/terms-of-service) here.
+
 == Installation ==
 
 1. Upload `mz-mobilize-america.php` to the `/wp-content/plugins/` directory
