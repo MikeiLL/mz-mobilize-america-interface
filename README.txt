@@ -16,7 +16,7 @@ Simple interface for displaying events from Mobilize America's API via shortcode
 
 == Installation ==
 
-1. Upload `mobilize-america.php` to the `/wp-content/plugins/` directory
+1. Upload `mz-mobilize-america.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Visit Admin->Settings->Mobilize America for Shortcodes
 

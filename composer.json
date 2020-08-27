@@ -1,5 +1,5 @@
 {
-  "name": "mikeill/mobilize-america",
+  "name": "mikeill/mz-mobilize-america",
   "description": "Interface with Mobilize America API",
   "keywords": [
     "api",
@@ -10,7 +10,7 @@
     "wordpress",
     "plugin"
   ],
-	"homepage": "https://github.com/MikeiLL/mobilize-america",
+	"homepage": "https://github.com/MikeiLL/mz-mobilize-america",
 	"license"          : "GPL-2.0-or-later",
 	"minimum-stability": "dev",
 	"authors": [

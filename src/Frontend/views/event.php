@@ -1,4 +1,4 @@
-<div class="row mb-2 p-1 mobilize-america-event">
+<div class="row mb-2 p-1 mz-mobilize-america-event">
     <?php
     $info_container_class = '';
     if ( $data->thumbnail && !empty($data->featured_image_url) ):

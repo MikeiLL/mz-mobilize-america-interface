@@ -212,7 +212,7 @@ class API {
     private function alert_admin($message) {
         
         $to = get_option('admin_email');
-        $subject = __('Mobilize America API Error', 'mobilize-america');
+        $subject = __('Mobilize America API Error', 'mz-mobilize-america');
         
         wp_mail( $to, $subject, $message, '');
 
