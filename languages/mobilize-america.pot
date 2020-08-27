@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"Project-Id-Version: Mobilize America Interface\n"
+"Project-Id-Version: MZ Mobilize America Interface\n"
 "POT-Creation-Date: 2019-01-14 14:14-0600\n"
 "PO-Revision-Date: 2019-01-13 16:25-0600\n"
 "Last-Translator: \n"
@@ -52,7 +52,7 @@ msgid "There was an error returning events:"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-msgid "Mobilize America Interface"
+msgid "MZ Mobilize America Interface"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
@@ -60,7 +60,7 @@ msgid "https://github.com/MikeiLL/mz-mobilize-america/"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid "Simple interface for Mobilize America API."
+msgid "Simple interface for MZ Mobilize America API."
 msgstr ""
 
 #. Author of the plugin/theme

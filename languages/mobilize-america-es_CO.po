@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Mobilize America Interface\n"
+"Project-Id-Version: MZ Mobilize America Interface\n"
 "POT-Creation-Date: 2019-01-14 14:14-0600\n"
 "PO-Revision-Date: 2019-01-14 14:15-0600\n"
 "Last-Translator: \n"
@@ -47,14 +47,14 @@ msgstr ""
 
 #: inc/events/class-events.php:217
 msgid "Mobilize America API Error"
-msgstr "Mobilize America API error"
+msgstr "MZ Mobilize America API error"
 
 #: inc/events/class-events.php:218
 msgid "There was an error returning events:"
 msgstr "Hubo un error al devolver eventos:"
 
 #. Plugin Name of the plugin/theme
-msgid "Mobilize America Interface"
+msgid "MZ Mobilize America Interface"
 msgstr "Movilizar América interfaz"
 
 #. Plugin URI of the plugin/theme
@@ -62,7 +62,7 @@ msgid "https://github.com/MikeiLL/mz-mobilize-america/"
 msgstr "https://github.com/MikeiLL/mz-mobilize-america/"
 
 #. Description of the plugin/theme
-msgid "Simple interface for Mobilize America API."
+msgid "Simple interface for MZ Mobilize America API."
 msgstr "Interfaz sencilla para movilizar America API."
 
 #. Author of the plugin/theme

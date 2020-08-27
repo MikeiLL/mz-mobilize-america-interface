@@ -721,8 +721,8 @@ class WP_OSA {
 	public function admin_menu() {
 		// add_options_page( $page_title, $menu_title, $capability, $menu_slug, array( $this, $callable ) );
 		add_options_page(
-			'Mobilize America Settings',
-			'Mobilize America',
+			'MZ Mobilize America Settings',
+			'MZ Mobilize America',
 			'manage_options',
 			'mobilize_america_settings',
 			array( $this, 'plugin_page' )
@@ -731,7 +731,7 @@ class WP_OSA {
 
 	public function plugin_page() {
 		echo '<div class="wrap">';
-		echo '<h1>Mobilize America Settings <span style="font-size:50%;">v' . NS\PLUGIN_VERSION . '</span></h1>';
+		echo '<h1>MZ Mobilize America Settings <span style="font-size:50%;">v' . NS\PLUGIN_VERSION . '</span></h1>';
 		$this->show_navigation();
 		$this->show_forms();
 		echo '</div>';

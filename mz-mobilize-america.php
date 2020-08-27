@@ -6,7 +6,7 @@
  * @package           Mobilize_America
  *
  * @wordpress-plugin
- * Plugin Name:       Mobilize America Interface
+ * Plugin Name:       MZ Mobilize America Interface
  * Plugin URI:        https://github.com/MikeiLL/mz-mobilize-america/
  * Description:       Simple interface for Mobilize America API.
  * Version:           1.0.0
@@ -54,7 +54,7 @@ if (file_exists($wp_mobilize_america_autoload)) {
 }
 
 if (!class_exists('\MZ_Mobilize_America\Core\Plugin_Core')) {
-	exit('Mobilize America requires Composer autoloading, which is not configured');
+	exit('MZ Mobilize America requires Composer autoloading, which is not configured');
 }
 
 /**

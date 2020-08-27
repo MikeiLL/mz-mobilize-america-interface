@@ -1,4 +1,4 @@
-=== Mobilize America ===
+=== MZ Mobilize America Interface ===
 Contributors: mikeill
 Donate link: http://mzoo.org/
 Tags: comments, spam
@@ -18,7 +18,7 @@ Simple interface for displaying events from Mobilize America's API via shortcode
 
 1. Upload `mz-mobilize-america.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Visit Admin->Settings->Mobilize America for Shortcodes
+3. Visit Admin->Settings->MZ Mobilize America for Shortcodes
 
 == Frequently Asked Questions ==
 
