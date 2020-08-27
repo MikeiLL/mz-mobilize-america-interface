@@ -74,12 +74,15 @@ git checkout-index -a -f --prefix=$SVNPATH/trunk/
 echo "Ignoring github specific files and deployment script"
 svn propset svn:ignore "
 README.md
+node_modules
 tests
 assets
 wpassets
 .DS_Store
 .gitmodules
 .babelrc
+package.json
+package-lock.json
 bin/install-wp-tests.sh
 phpunit.xml.dist
 phpcs.ruleset.xml
@@ -87,6 +90,7 @@ phpcs.xml.dist
 .git
 *.log
 *.sh
+webpack.config.js
 .gitignore" "$SVNPATH/trunk/"
 
 echo "Changing directory to SVN and committing to trunk"
