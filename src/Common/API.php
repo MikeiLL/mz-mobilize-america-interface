@@ -2,6 +2,9 @@
 namespace MZ_Mobilize_America\Common;
 
 use MZ_Mobilize_America as NS;
+
+use \Exception as Exception;
+
 /*
  * The API Class
  *
@@ -237,7 +240,7 @@ class API {
             self::alert_admin(print_r($response->error, True));
             throw new Exception($response->error);
         } else if (!$this->request_results->count >= 1) {
-            throw new \Exception("Zero Count");
+            throw new Exception("Zero Count");
         }
         
         // Does it make sense to Sanitize API Request Results here?
