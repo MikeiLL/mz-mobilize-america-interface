@@ -110,7 +110,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
             'nonce' => $nonce,
             'atts' => $atts
             );
-        wp_localize_script( 'mobilize_events_script', 'mobilize_america_events', $params);
+        wp_localize_script( 'mobilize_america_display_script', 'mobilize_america_events', $params);
     }
 
     /*
