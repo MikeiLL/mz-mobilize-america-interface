@@ -44,7 +44,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
 			'failure_to_retrieve' => __("Unable to retrieve listings at this time.", NS\PLUGIN_TEXT_DOMAIN),
 			'no_events_message' => __("We don't have any listings at this time. Click below to get involved or informed.", NS\PLUGIN_TEXT_DOMAIN),
 			'container_class' => 'loader',
-			'loading_text' => -__('Loading&#8230;', NS\PLUGIN_TEXT_DOMAIN),
+			'loading_text' => __('Loading&#8230;', NS\PLUGIN_TEXT_DOMAIN),
 			'container_id' => 'MobilizeEvents',
 			'thumbnail' => 0,
 			'events_feed' => '',
