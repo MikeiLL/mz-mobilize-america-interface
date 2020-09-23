@@ -116,12 +116,14 @@ class API {
         
         $organization_id = !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
         
-        if ($this->shortcode_atts['other_orgs'] == 1 && $endpoint == 'events'){
+        $helpers = new Helpers;
+        if ( ($endpoint == 'events') && ($this->shortcode_atts['other_orgs'] == 1) ){
             $url = 'https://' . $subdomain . '.mobilize.us/v1/organizations/' .$organization_id . '/' . $endpoint;
         } else {
             $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
-            $query_array = $this->parse_query_string();
         }
+        
+        $query_array = $this->parse_query_string(); // where other attributes are added
 
         switch($endpoint):
             case "ogranizations":
@@ -129,7 +131,9 @@ class API {
                 break;
             case "events":
                 $method = 'GET';
-                $now = new \DateTime(null, new \DateTimeZone('America/New_York'));
+                //$timezone = \wp_timezone();
+                //$now = new \DateTime(null, $timezone);
+                $now = new \DateTime(null, new \DateTimeZone( $this->wp_timezone_string() ));
                 // Allow One Day window to allow
                 // for in-progress events
                 $di = new \DateInterval('PT12H');
@@ -143,17 +147,18 @@ class API {
         
         $url = (!empty($query_array)) ? $url . '?' . http_build_query($query_array) : $url;
         
-        $url = htmlentities($url);
-
-		$response = wp_remote_post( $url, 
+		$response = wp_safe_remote_post( $url, 
 			array(
 				'method' => $method,
 				'timeout' => 45,
 				'httpversion' => '1.0',
 				'blocking' => true,
 				'headers' => '',
-				'body' => $data,
+                'body' => json_encode($data),
 				'data_format' => 'body',
+				'headers'     => [
+                    'Content-Type' => 'application/json',
+                ],
 				'cookies' => array()
 			) );
 	    
@@ -165,8 +170,35 @@ class API {
 		    $response_body = json_decode($response['body']);
 		    $this->next_page = $response_body->next;
 		    $this->previous_page = $response_body->previous;
+            
 		    return $response_body;
 		}	
+    }
+    
+    /*
+     * My WP Timezone String 
+     * @since 1.0.0
+     *
+     * If query_string present, parse into a usable array, merge with other shortcodes, build query;
+     * @return array of query parameters
+     */
+    private function wp_timezone_string() {
+        $timezone_string = get_option( 'timezone_string' );
+ 
+        if ( $timezone_string ) {
+            return $timezone_string;
+        }
+ 
+        $offset  = (float) get_option( 'gmt_offset' );
+        $hours   = (int) $offset;
+        $minutes = ( $offset - $hours );
+ 
+        $sign      = ( $offset < 0 ) ? '-' : '+';
+        $abs_hour  = abs( $hours );
+        $abs_mins  = abs( $minutes * 60 );
+        $tz_offset = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
+ 
+        return $tz_offset;
     }
     
     /*
@@ -189,10 +221,13 @@ class API {
         $this->current_page_via_query = get_query_var('mobilize_page', 0);
         
         $defaults = [
-            'organization_id' => !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'],
             'per_page' => !empty($this->shortcode_atts['per_page']) ? $this->shortcode_atts['per_page'] : $ma_options['per_page'],
             'page' => !empty($this->current_page_via_query) ? $this->current_page_via_query : ''
         ];
+        
+        if ($this->shortcode_atts['other_orgs'] != 1){
+            $defaults['organization_id'] = !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
+        }
         
         // Unset empty default values
         foreach($defaults as $k => $v) {
