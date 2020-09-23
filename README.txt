@@ -4,7 +4,7 @@ Donate link: http://mzoo.org/
 Tags: comments, spam
 Requires at least: 3.0.1
 Tested up to: 5.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,12 @@ Simple interface for displaying events from Mobilize America's API via shortcode
 Because I like Mobilize America and there wasn't one.
 
 == Changelog ==
+
+= v1.0.1 =
+* Bugfix: Stop enqueueing unnecessary files (which were also wrongly named)
+* Bugfix: Correct name of enqueued js file.
+* Bugfix: To include associated organization events, still need _some_ query variables.
+* Pull current time from WP settings instead of default timezone.
 
 = v1.0 =
 * Initial Release

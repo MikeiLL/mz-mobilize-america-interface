@@ -9,7 +9,7 @@
  * Plugin Name:       MZ Mobilize America Interface
  * Plugin URI:        https://github.com/MikeiLL/mz-mobilize-america/
  * Description:       Simple interface for Mobilize America API.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            mZoo/Mike iLL
  * Author URI:        http://mzoo.org/
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
 
 define( NS . 'PLUGIN_NAME', 'mz-mobilize-america' );
 
-define( NS . 'PLUGIN_VERSION', '1.0.0' );
+define( NS . 'PLUGIN_VERSION', '1.0.1' );
 
 define( NS . 'PLUGIN_NAME_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -43,7 +43,6 @@ define( NS . 'PLUGIN_NAME_URL', plugin_dir_url( __FILE__ ) );
 define( NS . 'PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 define( NS . 'PLUGIN_TEXT_DOMAIN', 'mz-mobilize-america' );
-
 
 /**
  * Autoload Classes
