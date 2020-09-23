@@ -239,7 +239,7 @@ class API {
         } else {
             $query_array = $defaults;
         }
-
+        
         return $query_array;
      }
     
@@ -324,7 +324,7 @@ class API {
             $item->timezone = sanitize_text_field($item->timezone);
             $item->instructions = htmlentities($item->timezone);
             
-            if (!empty($item->tags)) {
+            if (!empty($item->tags) && !empty($item->tags->name)) {
                 $item->tags->name = sanitize_text_field($item->tags->name);
             }
             
