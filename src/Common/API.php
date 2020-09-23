@@ -146,21 +146,24 @@ class API {
         endswitch;
         
         $url = (!empty($query_array)) ? $url . '?' . http_build_query($query_array) : $url;
-        
-		$response = wp_safe_remote_post( $url, 
-			array(
+		
+		$request_array = array(
 				'method' => $method,
 				'timeout' => 45,
 				'httpversion' => '1.0',
 				'blocking' => true,
-				'headers' => '',
-                'body' => json_encode($data),
 				'data_format' => 'body',
 				'headers'     => [
                     'Content-Type' => 'application/json',
                 ],
 				'cookies' => array()
-			) );
+		);
+			
+		if (!empty($data)) {
+		    $request_array['body'] = json_encode($data);
+	    }
+	    
+		$response = wp_safe_remote_post( $url, $request_array );
 	    
 	    if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
