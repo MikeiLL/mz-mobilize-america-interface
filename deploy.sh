@@ -95,12 +95,30 @@ webpack.config.js
 
 echo "Changing directory to SVN and committing to trunk"
 cd $SVNPATH/trunk/
-echo "Run composer install to get dependencies."
-composer install
+echo "Install production composer deps"
+# This requires jq: https://www.howtogeek.com/529219/how-to-parse-json-files-on-the-linux-command-line-with-jq/
+if [ -s './composer.json' ]; then
+    #Detect if there are composer dependencies
+    echo "-Check composer dependencies..."
+    if [ "$(uname)" == "Darwin" ]; then
+		dep=$(cat "./composer.json" | jq 'has("require")')
+	else
+		dep=$(cat "./composer.json" | jq 'has(".require")')
+	fi
+
+    if [ "$dep" == 'true' ]; then
+        echo "-Download clean composer dependencies..."
+        composer update --no-dev # &> /dev/null
+        echo "-Run composer dumpautoload -o"
+        composer dumpautoload -o
+    else
+        rm -rf ./composer.json
+    fi
+fi 
 # Add all new files that are not set to be ignored
-echo "Doing the file adding"
+echo "Do the file adding"
 svn status | grep -v "^.[ \t]*\..*" | grep "^?" | awk '{print $2}' | xargs svn add
-echo "Committing"
+echo "Commit"
 svn commit --username=$SVNUSER -m "$COMMITMSG"
 cd $SVNPATH
 svn copy trunk/ tags/$NEWVERSION1/
