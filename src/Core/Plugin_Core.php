@@ -147,6 +147,7 @@ class Plugin_Core {
 		// $this->loader->add_action( 'wp_ajax_nopriv_mobilize_america_events', $event_object, 'return_events' );
 		// $this->loader->add_action( 'wp_ajax_mobilize_america_events', $event_object, 'return_events' );
 		$this->loader->add_filter( 'query_vars', $helper_object, 'add_query_vars' );
+		$this->loader->add_filter( 'init', $helper_object, 'add_custom_setcookie_rewrite_endpoints' );
 
 	}
 

@@ -35,6 +35,22 @@ class Helpers {
         return $vars;
     }
     
+    /**
+     * Add Custom SetCookie
+     *
+     * This hack makes url query variable availble when is_home
+     * source: https://stackoverflow.com/a/46823786/2223106
+     *
+     * Probably can remove this when ajax functionality in place.
+     *
+     */
+    public function add_custom_setcookie_rewrite_endpoints() {
+        //add ?mobilize_page=123 endpoint with
+        //EP_ALL so endpoint is present across all places
+        //no effect on the query vars
+        add_rewrite_endpoint( 'mobilize_page', EP_ALL, $query_vars = false );
+    }
+    
     
     /**
      * Helper function to write strings or arrays to the screen
