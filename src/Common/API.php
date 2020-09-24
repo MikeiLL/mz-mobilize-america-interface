@@ -131,9 +131,7 @@ class API {
                 break;
             case "events":
                 $method = 'GET';
-                //$timezone = \wp_timezone();
-                //$now = new \DateTime(null, $timezone);
-                $now = new \DateTime(null, new \DateTimeZone( $this->wp_timezone_string() ));
+                $now = new \DateTime(null, \wp_timezone() );
                 // Allow One Day window to allow
                 // for in-progress events
                 $di = new \DateInterval('PT12H');
@@ -176,32 +174,6 @@ class API {
             
 		    return $response_body;
 		}	
-    }
-    
-    /*
-     * My WP Timezone String 
-     * @since 1.0.0
-     *
-     * If query_string present, parse into a usable array, merge with other shortcodes, build query;
-     * @return array of query parameters
-     */
-    private function wp_timezone_string() {
-        $timezone_string = get_option( 'timezone_string' );
- 
-        if ( $timezone_string ) {
-            return $timezone_string;
-        }
- 
-        $offset  = (float) get_option( 'gmt_offset' );
-        $hours   = (int) $offset;
-        $minutes = ( $offset - $hours );
- 
-        $sign      = ( $offset < 0 ) ? '-' : '+';
-        $abs_hour  = abs( $hours );
-        $abs_mins  = abs( $minutes * 60 );
-        $tz_offset = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
- 
-        return $tz_offset;
     }
     
     /*
