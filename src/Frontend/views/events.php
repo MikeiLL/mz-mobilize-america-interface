@@ -3,9 +3,7 @@ use MZ_Mobilize_America\Common as Common;
 use MZ_Mobilize_America\Libraries as Libraries;
 
 ?>
-<pre>
-<?php //print_r($data->api_object->request_results); ?>
-</pre>
+
 <div class="<?php echo $data->atts['container_id']; ?>">
 
 <span><?php echo $data->api_object->display_segment_info(); ?></span>

@@ -34,7 +34,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
     private $atts;
 
     public function handleShortcode($atts, $content = null) {
-
+        
         $this->atts = shortcode_atts( array(
 			'endpoint' => 'organizations',
 			'organization_id' => 0,
@@ -52,7 +52,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
 			'template_suffix' => '',
 			'other_orgs' => 0
 				), $atts );
-
+        
         // Add Style with script adder
         self::addScript();
         
@@ -63,7 +63,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
         }
         
         self::localizeScript($this->atts);
-                
+             
         $ma_options = get_option('mz_mobilize_america_settings');
         		                
         $ajax_template = $ma_options['use_ajax'] == 'on' ? '_ajax' : '';
