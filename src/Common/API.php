@@ -345,7 +345,7 @@ class API {
         if (False == $next_page_query) {
             return 0;
         }
-        return add_query_arg('mobilize_page', $next_page_query, get_the_permalink());
+        return esc_url( add_query_arg('mobilize_page', $next_page_query, get_the_permalink()) );
     }
     
     /*
@@ -360,7 +360,7 @@ class API {
         if (False == $prev_page_query) {
             return 0;
         }
-        return add_query_arg('mobilize_page', $prev_page_query, get_the_permalink());
+        return esc_url( add_query_arg('mobilize_page', $prev_page_query, get_the_permalink()) );
     }
     
     /*
@@ -400,7 +400,7 @@ class API {
             if ($this->current_page_via_query == $page) {
                 $return .= '<li class="nav-item-' . $page .'"><span class="current_page">' . $page . '</span></li>';
             } else {
-                $return .= '<li class="nav-item-' . $page .'"><a class="inactive" href="' . add_query_arg('mobilize_page', $page, get_the_permalink()) .'">' . $page . '</a></li>';
+                $return .= '<li class="nav-item-' . $page .'"><a class="inactive" href="' . esc_url( add_query_arg('mobilize_page', $page, get_the_permalink()) ).'">' . $page . '</a></li>';
             }
             
         }
