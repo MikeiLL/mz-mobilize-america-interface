@@ -63,13 +63,21 @@ git push origin master --tags
 
 echo 
 echo "Creating local copy of SVN repo ..."
-svn co $SVNURL $SVNPATH
+svn co $SVNURL $SVNPATH --depth empty 
+
+# for zsh disable prompt when removing wildcard
+setopt rmstarsilent
 
 echo "Clearing svn repo so we can overwrite it"
 rm -rf $SVNPATH/trunk/*
 
 echo "Exporting the HEAD of master from git to the trunk of SVN"
 git checkout-index -a -f --prefix=$SVNPATH/trunk/
+
+echo "Changing directory to SVN path"
+cd $SVNPATH
+echo "Update tags directory."
+svn update trunk  --depth empty
 
 echo "Ignoring github specific files and deployment script"
 svn propset svn:ignore "
@@ -95,6 +103,7 @@ webpack.config.js
 
 echo "Changing directory to SVN and committing to trunk"
 cd $SVNPATH/trunk/
+
 echo "Install production composer deps"
 # This requires jq: https://www.howtogeek.com/529219/how-to-parse-json-files-on-the-linux-command-line-with-jq/
 if [ -s './composer.json' ]; then
