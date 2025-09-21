@@ -9,7 +9,7 @@ use \Exception as Exception;
  * The API Class
  *
  * @since 1.0.0
- * 
+ *
  * Makes request, referencing shortcode_atts, and holds retrieved data.
  * Provides methods to get links for next and previous.
  *
@@ -20,7 +20,7 @@ class API {
 
     /*
      * Next Page
-     * 
+     *
      * @since 1.0.0
      *
      * @visibility private
@@ -28,10 +28,10 @@ class API {
      * This is the next page retrieved from the API
      */
     private $next_page;
-    
+
     /*
      * Previous Page
-     * 
+     *
      * @since 1.0.0
      *
      * @visibility private
@@ -40,10 +40,10 @@ class API {
      *
      */
     private $previous_page;
-    
+
     /*
      * Pagination Details
-     * 
+     *
      * @since 1.0.0
      *
      * @visibility public
@@ -52,77 +52,77 @@ class API {
      *
      */
     public $pagination_details;
-     
-    
+
+
     /*
      * Shortcode Attributes
      *
      * @since 1.0.0
-     * 
+     *
      * @visibility private
      */
     private $shortcode_atts;
-    
+
     /*
      * Request Results
      *
      * @since 1.0.0
-     * 
+     *
      * @visibility public
      */
     public $request_results;
-    
+
     /*
      * Current Page via Query
      *
      * @since 1.0.0
-     * 
+     *
      * @visibility public
      */
     public $current_page_via_query;
-    
-    
+
+
     /*
      * Basic Restful Request
      *
      * @since 1.0.0
-     * 
-     *  
+     *
+     *
      */
     public function __construct($shortcode_atts = [], $api_result = 0){
         $this->shortcode_atts = $shortcode_atts;
     }
-    
-    
-    
+
+
+
     /*
      * Basic Restful Request
      * @since 1.0.0
-     * 
+     *
      * Make the API call using wordpress wp_remote_post.
      *
      * @param $method string GET, POST, DELETE
-     * @param $endpoint string 
-     * @param $data string 
-     * @param $query_string string 
+     * @param $endpoint string
+     * @param $data string
+     * @param $query_string string
      */
     private function callApi($data = false) {
 
         $ma_options = get_option('mz_mobilize_america_settings');
-        		                
+
         $subdomain = $ma_options['use_staging'] == 'on' ? 'staging-api' : 'api';
-        
+
         $endpoint = $this->shortcode_atts['endpoint'];
-        
+
         $organization_id = !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
-        
+
         $helpers = new Helpers;
         if ( ($endpoint == 'events') && ($this->shortcode_atts['other_orgs'] == 1) ){
             $url = 'https://' . $subdomain . '.mobilize.us/v1/organizations/' .$organization_id . '/' . $endpoint;
         } else {
             $url = 'https://' . $subdomain . '.mobilize.us/v1/' . $endpoint;
         }
-        
+
         $query_array = $this->parse_query_string(); // where other attributes are added
 
         switch($endpoint):
@@ -142,11 +142,11 @@ class API {
 
                 break;
         endswitch;
-        
+
         $url = (!empty($query_array)) ? $url . '?' . http_build_query($query_array) : $url;
-		
+
 		$request_array = array(
-				'method' => $method,
+				'method' => isset($method) ? $method : '_GET',
 				'timeout' => 45,
 				'httpversion' => '1.0',
 				'blocking' => true,
@@ -156,28 +156,30 @@ class API {
                 ],
 				'cookies' => array()
 		);
-			
+
 		if (!empty($data)) {
 		    $request_array['body'] = json_encode($data);
 	    }
-	    
+
 		$response = wp_safe_remote_post( $url, $request_array );
-	    
+
 	    if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			self::alert_admin($error_message);
 			return "Error: " . $error_message;
 		} else {
 		    $response_body = json_decode($response['body']);
-		    $this->next_page = $response_body->next;
-		    $this->previous_page = $response_body->previous;
-            
+        if (!empty($response_body)) {
+		      $this->next_page = $response_body->next;
+		      $this->previous_page = $response_body->previous;
+        }
+
 		    return $response_body;
-		}	
+		}
     }
-    
+
     /*
-     * Parse Query String 
+     * Parse Query String
      * @since 1.0.0
      *
      * If query_string present, parse into a usable array, merge with other shortcodes, build query;
@@ -185,66 +187,68 @@ class API {
      */
      private function parse_query_string(){
         $query_string = $this->shortcode_atts['query_string'];
-                
+
         //remove question mark if present
         if (substr($query_string, 0, 1) == '?') {
             $query_string = substr($query_string, 1);
-        } 
-        
+        }
+
         $ma_options = get_option('mz_mobilize_america_settings');
-        
+
         $this->current_page_via_query = get_query_var('mobilize_page', 0);
-        
+
         $defaults = [
             'per_page' => !empty($this->shortcode_atts['per_page']) ? $this->shortcode_atts['per_page'] : $ma_options['per_page'],
             'page' => !empty($this->current_page_via_query) ? $this->current_page_via_query : ''
         ];
-        
+
         if ($this->shortcode_atts['other_orgs'] != 1){
             $defaults['organization_id'] = !empty($this->shortcode_atts['organization_id']) ? $this->shortcode_atts['organization_id'] : $ma_options['organization_id'];
         }
-        
+
         // Unset empty default values
         foreach($defaults as $k => $v) {
             if (empty($v)) unset($defaults[$k]);
         }
-        
+
         if (!empty($query_string)){
             $query_array = wp_parse_args($query_string, $defaults);
         } else {
             $query_array = $defaults;
         }
-        
+
         return $query_array;
      }
-    
+
     /*
      * Alert Admin
      *
      */
     private function alert_admin($message) {
-        
+
         $to = get_option('admin_email');
         $subject = __('Mobilize America API Error', 'mz-mobilize-america');
-        
+
         wp_mail( $to, $subject, $message, '');
 
     }
-    
+
     /*
      * Make Request
      *
      * @since 1.0.0
-     * 
+     *
      * This is the static function through which this class is interfaced.
      * @param $method string GET, POST, DELETE
-     * @param $endpoint string 
-     * @param $data string 
-     * @param $query_string string 
+     * @param $endpoint string
+     * @param $data string
+     * @param $query_string string
      */
     public function make_request($data = false) {
-    
+
         $this->request_results = self::callApi($data);
+
+        if (empty($this->request_results)) return;
 
         if (!empty($this->request_results->error)) {
             self::alert_admin(print_r($response->error, True));
@@ -252,28 +256,28 @@ class API {
         } else if (!$this->request_results->count >= 1) {
             throw new Exception("Zero Count");
         }
-        
+
         // Does it make sense to Sanitize API Request Results here?
         $this->sanitize_results();
-        
+
         return $this->request_results;
-        
+
     }
-    
+
     private function sanitize_results() {
-    
+
         $this->request_results->data = array_map(function ($item){
             $item->title = sanitize_text_field($item->title);
             $item->description = htmlentities($item->description);
             $item->featured_image_url = esc_url($item->featured_image_url);
-            
+
             if (!empty($item->timeslots)){
                 $item->timeslots = array_map(function($slot){
                     $slot->instructions = htmlentities($slot->instructions);
                     return $slot;
                 }, $item->timeslots);
             }
-            
+
             $item->summary = htmlentities($item->summary);
             $item->accessibility_notes = htmlentities($item->accessibility_notes);
             $item->virtual_action_url = esc_url($item->virtual_action_url);
@@ -281,7 +285,7 @@ class API {
             $item->event_type = sanitize_text_field($item->event_type);
             $item->approval_status = sanitize_text_field($item->approval_status);
             $item->location = sanitize_text_field($item->location);
-            
+
             if (!empty($item->sponsor)) {
                 $item->sponsor->state = sanitize_text_field($item->sponsor->state);
                 $item->sponsor->org_type = sanitize_text_field($item->sponsor->org_type);
@@ -292,50 +296,50 @@ class API {
                 $item->sponsor->event_feed_url = esc_url($item->sponsor->event_feed_url);
                 $item->sponsor->slug = sanitize_title($item->sponsor->slug);
             }
-            
+
             $item->visibility = sanitize_text_field($item->visibility);
             $item->address_visibility = sanitize_text_field($item->address_visibility);
             $item->event_campaign = sanitize_text_field($item->event_campaign);
             $item->timezone = sanitize_text_field($item->timezone);
             $item->instructions = htmlentities($item->timezone);
-            
+
             if (!empty($item->tags) && !empty($item->tags->name)) {
                 $item->tags->name = sanitize_text_field($item->tags->name);
             }
-            
+
             return $item;
-            
+
         }, $this->request_results->data);
 
         return $this->request_results;
     }
-    
+
     /*
      * Add query vars
-     * 
+     *
      * @since 1.0.0
-     * 
+     *
      * @param $url_string, generally returned from Mobilize API
      * @param $arg which query argument to return
      * @return int the page referenced in the url's query string, or 0 if not present
      */
     public function get_query($url_string, $arg = 'page'){
-    
+
         $url_array = wp_parse_url($url_string);
-        
+
         if (empty($url_array['query'])) return 0;
-        
+
         $query_args = wp_parse_args($url_array['query']);
 
         if (empty($query_args[$arg])) return 1;
-        
+
         return $query_args[$arg];
     }
-    
-    
+
+
     /*
      * Get Next Page URL
-     * 
+     *
      * @since 1.0.0
      *
      * @return False or string url of with mobilize_page query string for subsequent listings
@@ -347,10 +351,10 @@ class API {
         }
         return esc_url( add_query_arg('mobilize_page', $next_page_query, get_the_permalink()) );
     }
-    
+
     /*
      * Get Previous Page URL
-     * 
+     *
      * @since 1.0.0
      *
      * @return False or string url of with mobilize_page query string for previous listings
@@ -362,10 +366,10 @@ class API {
         }
         return esc_url( add_query_arg('mobilize_page', $prev_page_query, get_the_permalink()) );
     }
-    
+
     /*
      * Get Step Navigation
-     * 
+     *
      * @since 1.0.0
      *
      * @return string HTML built from get_previous and get_next
@@ -383,10 +387,10 @@ class API {
         $return .= '</div>';
         return $return;
     }
-    
+
     /*
      * Get Numeric Navigation
-     * 
+     *
      * @since 1.0.0
      *
      * @return string HTML with numeric data pagination links
@@ -402,16 +406,16 @@ class API {
             } else {
                 $return .= '<li class="nav-item-' . $page .'"><a class="inactive" href="' . esc_url( add_query_arg('mobilize_page', $page, get_the_permalink()) ).'">' . $page . '</a></li>';
             }
-            
+
         }
         $return .= '</ul>';
         return $return;
     }
-    
-    
+
+
     /*
      * Current Page
-     * 
+     *
      * @since 1.0.0
      *
      * @return int Current Page
@@ -428,10 +432,10 @@ class API {
         }
         return 0;
     }
-    
+
     /*
      * Results Per Page
-     * 
+     *
      * @since 1.0.0
      *
      * @return int Requested per page count or the default which is 25
@@ -440,38 +444,48 @@ class API {
         $per_page = $this->parse_query_string()['per_page'];
         return (!empty($per_page)) ? $per_page : 25;
     }
-    
-    
+
+
     /*
      * Get Segment Info
-     * 
+     *
      * @since 1.0.0
-     * 
+     *
      *
      * @return array containing information about the segment returned of total request results
      */
     public function get_segment_info(){
+      if (empty($this->request_results)) {
+        return [
+          'current_segment_start' => 0,
+          'current_segment_end' => 0,
+          'total_results' => 0,
+          'current_page' => 0,
+          'number_of_pages' => 0
+      ];
+      } else {
         $total_results = $this->request_results->count;
         $current_result_count = count($this->request_results->data);
         $current_page = $this->current_page();
-        $current_segment_start = $current_result_count * $current_page - ($current_result_count - 1); 
-        $current_segment_end = $current_result_count * $current_page; 
-        $number_of_pages = ceil($total_results / $this->results_per_page()); 
+        $current_segment_start = $current_result_count * $current_page - ($current_result_count - 1);
+        $current_segment_end = $current_result_count * $current_page;
+        $number_of_pages = ceil($total_results / $this->results_per_page());
         return [
             'current_segment_start' => $current_segment_start,
             'current_segment_end' => $current_segment_end,
             'total_results' => $total_results,
-            'current_page' => $current_page, 
+            'current_page' => $current_page,
             'number_of_pages' => $number_of_pages
-        ];;
+        ];
+      }
     }
-    
-    
+
+
     /*
      * Display Segment Info
-     * 
+     *
      * @since 1.0.0
-     * 
+     *
      *
      * @return array containing information about the segment returned of total request results
      */
@@ -479,12 +493,12 @@ class API {
         $this->pagination_details = $this->get_segment_info();
         return sprintf(__("Results %1d - %2d of %3d.", NS\PLUGIN_TEXT_DOMAIN), $this->pagination_details['current_segment_start'], $this->pagination_details['current_segment_end'], $this->pagination_details['total_results']);
     }
-    
+
     /*
      * Display Pagination Info
-     * 
+     *
      * @since 1.0.0
-     * 
+     *
      *
      * @return array containing information about the segment returned of total request results
      */

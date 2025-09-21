@@ -34,7 +34,8 @@ Because I like Mobilize America and there wasn't one.
 
 = v1.0.4 =
 * Update version and tested up to number.
-* BUGFIX: bad data and non options set.
+* BUGFIX: better feedback when options not set or requests empty.
+* Enhancement: Add some event-dependent css classes to events display for each event.
 
 = v1.0.3 =
 * Update version and tested up to number.

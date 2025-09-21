@@ -12,6 +12,13 @@ use MZ_Mobilize_America\Libraries as Libraries;
 <?php echo $data->api_object->get_step_navigation(); ?>
 <?php
 foreach($data->api_object->request_results->data as $k => $event){ ?>
+  <?php
+  $css_classes = "event_type_" . $event->event_type . ' ';
+  $css_classes .= "visibility_" . $event->visibility . ' ';
+  $css_classes .= "accessibility_status_" . $event->accessibility_status . ' ';
+  $css_classes .= "approval_status_" . $event->approval_status . ' ';
+  ?>
+  <div class="<?php echo $css_classes?>">
     <h5><?php echo $event->title; ?></h5>
     <p>
     <?php if ( ($data->atts['thumbnail'] != false) && !empty($event->featured_image_url) ): ?>
@@ -22,7 +29,10 @@ foreach($data->api_object->request_results->data as $k => $event){ ?>
     <?php if (isset($event->venue)): ?>
         <h6><?php echo $event->venue ?></h6>
         <?php endif; ?>
-        <h6><?php echo $event->location_address . ' ' . $event->locality . ' ' . $event->region . ' ' . $event->postal_code ?></h6>
+        <h6><?php echo (isset($event->location_address) ? $event->location_address : '')
+          . ' ' . (isset($event->locality) ? $event->locality : '')
+          . ' ' . (isset($event->region) ? $event->region : '')
+          . ' ' . (isset($event->postal_code) ? $event->postal_code : '')?></h6>
         <?php
         $event_count = count($event->timeslots);
         if ($event_count > 3):
@@ -47,6 +57,7 @@ foreach($data->api_object->request_results->data as $k => $event){ ?>
         <?php endif; ?>
     <a class="<?php echo $data->atts['button_class']; ?>" href="<?php echo $event->browser_url; ?>"><?php echo $data->atts['sign_up_text']; ?></a> |
     <a class="<?php echo $data->atts['button_class']; ?>" href="<?php echo $event->sponsor->event_feed_url; ?>"><?php echo $data->atts['full_listing_text']; ?></a>
+  </div>
 <?php } ?>
 
 <?php echo $data->api_object->get_step_navigation(); ?>

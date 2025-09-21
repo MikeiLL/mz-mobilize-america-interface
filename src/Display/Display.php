@@ -8,33 +8,33 @@ use MZ_Mobilize_America\Libraries as Libraries;
 use \Exception as Exception;
 
 class Display extends Shortcode\Shortcode_Script_Loader {
-    
+
     /*
      * @since 1.0.0
-     * 
+     *
      * visibility private
      * Shortcode attribute Errors, if any
      */
     private $attribute_errors = [];
-    
+
     /*
      * @since 1.0.0
-     * 
+     *
      * visibility public
      * If scripts and styles have been enqueued
      */
     static $addedAlready = false;
-    
+
     /*
      * @since 1.0.0
-     * 
+     *
      * visibility private
      * Shortcode attributes
      */
     private $atts;
 
     public function handleShortcode($atts, $content = null) {
-        
+
         $this->atts = shortcode_atts( array(
 			'endpoint' => 'organizations',
 			'organization_id' => 0,
@@ -52,43 +52,46 @@ class Display extends Shortcode\Shortcode_Script_Loader {
 			'template_suffix' => '',
 			'other_orgs' => 0
 				), $atts );
-        
+
         // Add Style with script adder
         self::addScript();
-        
+
         try {
             $this->validate_and_sanitize_atts();
         } catch (Exception $e) {
             return sprintf(__("Errors found in shortcode atts: <code>%1s</code>. Refer to the docs in admin settings and update or remove them.", NS\PLUGIN_TEXT_DOMAIN), implode( ', ' , $this->attribute_errors ));
         }
-        
+
         self::localizeScript($this->atts);
-             
+
         $ma_options = get_option('mz_mobilize_america_settings');
-        		                
-        $ajax_template = $ma_options['use_ajax'] == 'on' ? '_ajax' : '';
-        
+
+        if (!is_array($ma_options)) return "ERROR: Mobilize Settings missing. (See Admin Settings panel.) ";
+
+        $ajax_template = '';
+        if (array_key_exists('use_ajax', $ma_options)) $ma_options['use_ajax'] == 'on' ? '_ajax' : '';
+
         $this->atts['button_class'] = !empty($ma_options['button_class']) ? $ma_options['button_class'] : 'btn mobilize';
-        
+
         $this->atts['endpoint'] = strtolower($this->atts['endpoint']);
 
         $api_object = new Common\API($this->atts);
-                
+
         try {
             $api_object->make_request(false);
         } catch (\Exception $e) {
             return ($e->getMessage() == 'Zero Count') ? $this->atts['no_events_message'] : $this->atts['failure_to_retrieve'];
         }
-        
+
         ob_start();
         $template_loader = new Libraries\Template_Loader();
         $template_loader->set_template_data( ['atts' => $this->atts, 'api_object' => $api_object] );
         $template_file = $template_loader->get_template_part( $this->atts['endpoint'] . $ajax_template .$this->atts['template_suffix'] );
-        
+
         if (empty($template_file)) return __("Template file does not exist.", NS\PLUGIN_TEXT_DOMAIN);
-        
+
         return ob_get_clean();
-        
+
     }
 
     public function addScript() {
@@ -120,14 +123,14 @@ class Display extends Shortcode\Shortcode_Script_Loader {
      *
      */
     private function request_data() {
-                
+
         $api = new Common\API($this->atts);
-                
+
         $result = $api->make_request(false);
-        
+
         return $result;
     }
-    
+
     /* Verify and Sanitize
      *
      * @since 1.0.0
@@ -135,7 +138,7 @@ class Display extends Shortcode\Shortcode_Script_Loader {
      * Sanitize Atts or return error.
      */
     public function validate_and_sanitize_atts(){
-        
+
         // Check user input and report errors
         foreach ($this->atts as $attr => $val) {
             if (empty($val)) continue;
@@ -184,13 +187,13 @@ class Display extends Shortcode\Shortcode_Script_Loader {
                    $this->atts[$attr] = sanitize_text_field($val);
             }
         }
-        
+
         if (!empty($this->attribute_errors)){
             throw new Exception('Attribute Errors');
         }
     }
 
-    
+
 }
 
 ?>

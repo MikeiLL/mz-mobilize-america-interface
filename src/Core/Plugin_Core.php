@@ -217,6 +217,6 @@ class Plugin_Core {
         $settings_page = new Backend\Settings_Page();
         $settings_page->addSections();
     }
-    
+
 
 }
