@@ -47,5 +47,10 @@
 	},
   "require-dev": {
     "coenjacobs/mozart": "dev-master"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }
