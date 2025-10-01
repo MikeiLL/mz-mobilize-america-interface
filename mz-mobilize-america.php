@@ -9,7 +9,7 @@
  * Plugin Name:       MZ Mobilize America Interface
  * Plugin URI:        https://github.com/MikeiLL/mz-mobilize-america/
  * Description:       Simple interface for Mobilize America API.
- * Version:           1.0.4
+ * Version:           1.0.5
  * Author:            mZoo/Mike iLL
  * Author URI:        http://mzoo.org/
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
 
 define( NS . 'PLUGIN_NAME', 'mz-mobilize-america' );
 
-define( NS . 'PLUGIN_VERSION', '1.0.4' );
+define( NS . 'PLUGIN_VERSION', '1.0.5' );
 
 define( NS . 'PLUGIN_NAME_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -68,7 +68,7 @@ register_activation_hook( __FILE__, array( NS . '\Core\Activator', 'activate' ) 
  * This action is documented inc/core/class-deactivator.php
  */
 
-register_deactivation_hook( __FILE__, array( NS . '\Core\Deactivator', 'deactivate' ) );
+//register_deactivation_hook( __FILE__, array( NS . '\Core\Deactivator', 'deactivate' ) );
 
 /**
  * Plugin Singleton Container

@@ -32,6 +32,9 @@ Because I like Mobilize America and there wasn't one.
 
 == Changelog ==
 
+= v1.0.5 =
+* Bugfix: remove unnecessary deactivation hook
+
 = v1.0.4 =
 * Update version and tested up to number.
 * BUGFIX: better feedback when options not set or requests empty.
